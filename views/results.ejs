@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Results</title>
+    <link rel="stylesheet" type="text/css" href="views/public/css/bootstrap.css">
+
+</head>
+<body>
+<div class="container">
+	<div class="jumbotron">
+		<h1>Flick Finder</h1>
+		<form class="form-signin" role="form" method="GET" action="/results">
+			<div class="form-group">
+				<label for="exampleInputEmail1">Whatcha' lookin' for?</label>
+				<input type="text" name="search" class="form-control" id="exampleInputEmail1" placeholder="Enter movie title">
+			</div>
+		    <p><button type="submit" class="btn btn-lg btn-primary">Find</button></p>
+		</form>
+	</div>	
+	<div class="col-sm-12">
+		<h2>Search Results</h2>
+		<div class="col-sm-9">
+			<p><%= results %></p>
+		</div>
+			
+	</div>
+</div>
+</body>
+</html>
