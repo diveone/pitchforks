@@ -43,16 +43,13 @@ passport.deserializeUser(function(id, done) {
       done(err, dbRes.rows[0]);
     }
   });
-  // findById(id, function (err, user) {
-  //   done(err, user);
-  // });
 });
 
 var localStrategy = new LocalStrategy(
   function(username, password, done) {
     db.query('SELECT * FROM users WHERE username = $1', [username], function(err, dbRes) {
       var user = dbRes.rows[0];
-      console.log(username)
+      console.log(username);
 
       console.log(user);
 
@@ -66,7 +63,42 @@ var localStrategy = new LocalStrategy(
 
 passport.use(localStrategy);
 
-// ROUTES: Home
+// ROUTES: All Users
 app.get('/', function(req,res) {
   res.render('index', { user: req.user });
 });
+
+app.get('/login', function(req,res) {
+  res.render('login', { user: req.user });
+});
+
+app.get('/signup', function(req,res) {
+  res.render('signup', { user: req.user });
+});
+
+app.post('/signup', function(req,res) {
+  var registration = [req.body.username, req.body.email, req.body.password];
+  db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", registration, function(err, dbRes) {
+    if(!err) {
+      res.redirect('/login');
+    }
+  });
+});
+
+app.post('/login', passport.authenticate('local', 
+  {failureRedirect: 'login'}), function(req, res) {
+    res.redirect('/');
+});
+
+app.get('/logout', function(req,res) {
+  res.render('index', { user: req.user });
+});
+
+app.delete('/logout', function(req, res) {
+  req.logout();
+  res.redirect('index');
+});
+
+// ROUTES: Registered Users
+
+// ROUTES: Organizers
