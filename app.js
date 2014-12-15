@@ -154,11 +154,36 @@ app.delete('/logout', function(req, res) {
 
 app.get('/profile', function(req,res) {
 	var user = req.user;
+	console.log(user);
 	if (user) {
   	res.render('user/profile', { user: user });
 	} else {
 		res.send('You must be logged in.');
 	}
 });
+
+app.get('/edit', function(req,res) {
+	var user = req.user;
+  res.render('user/edit', { user: user });
+});
+
+app.patch('/user/:id', function(req, res) {
+	var userData = [req.body.username, req.body.email, req.body.avatar, req.params.id];
+	db.query("UPDATE users SET username = $1, email = $2, avatar = $3 WHERE id = $4", userData, function(err, dbRes) {
+		if (!err) {
+			res.redirect('/profile');
+		}
+	});
+});
+
+app.get('/user/:id', function(req, res) {
+	db.query("SELECT * FROM users WHERE id = $1", [req.params.id], function(err, dbRes) {
+		if(!err) {
+			res.render('user/show', { user: dbRes.rows[0] });
+		}
+	});
+});
+
+
 
 // ROUTES: Organizers

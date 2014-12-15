@@ -30,24 +30,25 @@
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<% if(user) { %>
-          	  <li><a href="./logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
-          	  <li><a href="./profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
-          	  <li><a href="/posts/new">Submit</a></li>
-          	<% } else { %>
-          	  <li><a href="./signup"><span class="fa fa-user"></span>Sign-Up</a></li>
-          	  <li><a href="./login"><span class="fa fa-user"></span>Login</a></li>
-          	<% } %>
+          				  <li><a href="./logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
+          				  <li><a href="./profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
+          				  <li><a href="/posts/new">Submit</a></li>
+          				<% } else { %>
+          				  <li><a href="./signup"><span class="fa fa-user"></span>Sign-Up</a></li>
+          				  <li><a href="./login"><span class="fa fa-user"></span>Login</a></li>
+          				<% } %>
 					</ul>
 				</div>
 
 			</div>
 		</nav>
 	<div class="col-sm-12">
-			<p><img src="<%= user.avatar %>"></p>
+			<p><img src="<%= user.avatar %>" width="100px"></p>
 			<ul>
 				<li><%= user.username %></li>
 				<li><%= user.email %></li>
 			</ul>
+			<p><a href="/edit">Edit</a></p>
 	</div>
 	
 </div>
