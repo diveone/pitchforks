@@ -1,3 +1,4 @@
+// MODULES AND VARIABLES
 var express       = require('express'),
     ejs           = require('ejs'),
     path          = require('path'),
@@ -11,7 +12,10 @@ var express       = require('express'),
     methodOverride= require('method-override'),
     db            = require('./db.js');
     app           = express(),
-    twitterAPI 		= require('node-twitter-api'),
+    util = require('util'),
+    TwitterStrategy = require('passport-twitter').Strategy,
+    // twitterAPI 		= require('node-twitter-api'),
+    // RedisStore    = require('connect-redis')(express),
     port          = process.env['PORT'] || 7000;
 
 // CONFIGURATION
@@ -23,6 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended':true}));
 app.use(session({
   secret: 'milk and cookies',
+  cookie: { maxAge: 300000 },
   resave: false,
   saveUninitialized: true
 }));
@@ -65,49 +70,39 @@ var localStrategy = new LocalStrategy(
 
 passport.use(localStrategy);
 
+// ensureAuthenticated.js
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login')
+}
+
 // Configure Twitter authentication
-var twitter = new twitterAPI({
-    consumerKey: 'SHojLsO5Xo0ab3GoLvAX2Kefg',
-    consumerSecret: 'PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD',
-    callback: 'http://localhost:7000'
-});
+var TWITTER_CONSUMER_KEY = "SHojLsO5Xo0ab3GoLvAX2Kefg";
+var TWITTER_CONSUMER_SECRET = "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD";
 
-// twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
-//     if (error) {
-//         console.log("Error getting OAuth request token : " + error);
-//     } else {
-//         //store token and tokenSecret somewhere, you'll need them later; redirect user
-//     }
-// });
-
-// twitter.getAccessToken(requestToken, requestTokenSecret, oauth_verifier, function(error, accessToken, accessTokenSecret, results) {
-//     if (error) {
-//         console.log(error);
-//     } else {
-//         //store accessToken and accessTokenSecret somewhere (associated to the user)
-//         //Step 4: Verify Credentials belongs here
-//     }
-// });
-
-// twitter.verifyCredentials(accessToken, accessTokenSecret, function(error, data, response) {
-//     if (error) {
-//         //something was wrong with either accessToken or accessTokenSecret
-//         //start over with Step 1
-//     } else {
-//         //accessToken and accessTokenSecret can now be used to make api-calls (not yet implemented)
-//         //data contains the user-data described in the official Twitter-API-docs
-//         //you could e.g. display his screen_name
-//         console.log(data["screen_name"]);
-//     }
-// });
+passport.use(new TwitterStrategy({
+    consumerKey: TWITTER_CONSUMER_KEY,
+    consumerSecret: TWITTER_CONSUMER_SECRET,
+    callbackURL: "http://localhost:8000/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+    // asynchronous verification, for effect...
+    process.nextTick(function () {
+      
+      // To keep the example simple, the user's Twitter profile is returned to
+      // represent the logged-in user.  In a typical application, you would want
+      // to associate the Twitter account with a user record in your database,
+      // and return that user instead.
+      return done(null, profile);
+    });
+  }
+));
 
 // ===================================================================
-// ROUTES: ALL USERS 
+// ROUTES: PUBLIC
 // ===================================================================
-// Header links throughout site (authentication based)
-// app.get('/', function(req,res) {
-//   res.render('index', { user: req.user });
-// });
+// All visitor can view and interact.
 
 app.get('/', function(req, res) {
     db.query('SELECT * FROM protests', function(err, dbRes) {
@@ -133,29 +128,41 @@ app.get('/results', function(req,res) {
   });
 });
 
+// View selected event
+app.get('/protests/:id', function(req, res) {
+  db.query("SELECT * FROM protests WHERE event_id = $1", [req.params.id], function(err, dbRes) {
+    if(!err) {
+      res.render('show', { user: req.user, protest: dbRes.rows[0] });
+    }
+  });
+});
+
 // ===================================================================
-// ROUTES: New User Registration 
+// ROUTES: SIGN-UP, LOGIN, LOGOUT 
 // ===================================================================
-// User sign-up form with redirect to login form.
+// User sign-up form with redirect to login form
 app.post('/signup', function(req,res) {
   var registration = [req.body.username, req.body.email, req.body.password];
   db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", registration, function(err, dbRes) {
     if(!err) {
       res.redirect('/login');
+      // How to write successRedirect and successFlash?
     }
   });
 });
 
-// User login authentication with redirect to homepage
+// If login credentials are in database, success. Else, login again.
 app.post('/login', passport.authenticate('local', 
-  {failureRedirect: 'login'}), function(req, res) {
+  {failureRedirect: 'login', failureFlash: 'No dice. Try again.'}), function(req, res) {
     res.redirect('/');
 });
 
 // User logout
-app.get('/logout', function(req,res) {
-  res.render('index', { user: req.user });
-});
+// app.get('/logout', function(req,res) {
+//   db.query('SELECT * FROM protests', function(err, dbRes) {
+//       res.render('index', { user: req.user, protests: dbRes.rows });
+//     });
+// });
 
 app.delete('/logout', function(req, res) {
   req.logout();
@@ -167,14 +174,11 @@ app.delete('/logout', function(req, res) {
 // ===================================================================
 // This section is protected
 
-app.get('/profile', function(req,res) {
+app.get('/profile', ensureAuthenticated, function(req,res) {
 	var user = req.user;
-	console.log(user);
-	if (user) {
-  	res.render('users/profile', { user: user });
-	} else {
-		res.send('You must be logged in.');
-	}
+    db.query('SELECT * FROM users_protests', function(err, dbRes) {
+  	 res.render('users/profile', { user: user, protests: dbRes.rows });  
+    });
 });
 
 // Edit user form
@@ -183,7 +187,7 @@ app.get('/edit', function(req,res) {
   res.render('users/edit', { user: user });
 });
 
-// Edit form submission
+// Submit edits
 app.patch('/users/:id', function(req, res) {
 	var userData = [req.body.username, req.body.email, req.body.avatar, req.params.id];
 	db.query("UPDATE users SET username = $1, email = $2, avatar = $3 WHERE id = $4", userData, function(err, dbRes) {
@@ -203,35 +207,44 @@ app.get('/users/:id', function(req, res) {
 });
 
 // ===================================================================
-// ROUTES: PROTEST EVENT EDITING
+// ROUTES: PROTESTS
 // ===================================================================
 // This section is protected
+
+// PREVENT USING DIRECT URLS:
+// If logged in, create new protest. Else, send to login form.
 app.get('/protests', function(req,res) {
 	var user = req.user;
-	console.log(user);
 	if (user) {
   	res.render('protests/new', { user: user });
 	} else {
-		res.send('You must be logged in.');
+		res.render('login');
 	}
 });
 
+// Submit a protest
 app.post('/submit', function(req,res) {
-  var protest = [req.body.name, req.body.location, req.body.date];
-  db.query("INSERT INTO protests (name, location, date) VALUES ($1, $2, $3)", protest, function(err, dbRes) {
+  var protestData = [req.body.name, req.body.description, req.body.location, req.body.date, req.user.id];
+  db.query("INSERT INTO protests (name, description, location, date, submitted_by) VALUES ($1, $2, $3, $4, $5)", protestData, function(err, dbRes) {
     if(!err) {
       res.redirect('/');
+      // Needs redirect to the protest submitted
     }
   });
 });
 
-// Edit a protest
-app.get('/edit', function(req,res) {
+// PREVENT USING DIRECT URLS:
+// If logged in, protest edit form. Else, login please.
+app.get('/protests/edit', function(req,res) {
 	var user = req.user;
-  res.render('users/edit', { user: user });
+  if (user) {
+    res.render('protests/edit', { user: user });
+  } else {
+    res.render('login');
+  }
 });
 
-// Submit profile edits
+// Submit protest edit form
 app.patch('/protests/:id', function(req, res) {
 	var protestData = [req.body.name, req.body.location, req.body.date, req.params.id];
 	db.query("UPDATE protests SET name = $1, location = $2, date = $3 WHERE event_id = $4", protestData, function(err, dbRes) {
@@ -241,18 +254,22 @@ app.patch('/protests/:id', function(req, res) {
 	});
 });
 
-// View selected event
-app.get('/protests/:id', function(req, res) {
-	db.query("SELECT * FROM protests WHERE event_id = $1", [req.params.id], function(err, dbRes) {
-		if(!err) {
-			res.render('protests/show', { protest: dbRes.rows[0] });
-		}
-	});
-});
+// ===================================================================
+// TWITTER AUTHENTICATION: https://github.com/jaredhanson/passport-twitter
+// ===================================================================
+app.get('/auth/twitter', passport.authenticate('twitter'), function(req, res){
+    // The request will be redirected to Twitter for authentication, so this
+    // function will not be called.
+  });
 
+app.get('/auth/twitter/callback', 
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 // ===================================================================
-// MIDDELWARE
+// MIDDLEWARE
 // ===================================================================
 // Authenticate users
 function isLoggedIn(req, res, next) {
