@@ -38,7 +38,8 @@ CREATE TABLE protests (
     location character varying(255),
     date timestamp with time zone,
     submitted_by integer,
-    event_id integer NOT NULL
+    event_id integer NOT NULL,
+    description text
 );
 
 
@@ -119,8 +120,9 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 -- Data for Name: protests; Type: TABLE DATA; Schema: public; Owner: proto
 --
 
-COPY protests (name, location, date, submitted_by, event_id) FROM stdin;
-Protest SF	Berkely CA	2014-12-20 00:00:00-08	\N	1
+COPY protests (name, location, date, submitted_by, event_id, description) FROM stdin;
+Protest SF	Berkely CA	2014-12-20 00:00:00-08	\N	1	\N
+\N	\N	\N	\N	2	There will be all day protests down at Berkeley against police.
 \.
 
 
@@ -128,7 +130,7 @@ Protest SF	Berkely CA	2014-12-20 00:00:00-08	\N	1
 -- Name: protests_event_id_seq; Type: SEQUENCE SET; Schema: public; Owner: proto
 --
 
-SELECT pg_catalog.setval('protests_event_id_seq', 1, true);
+SELECT pg_catalog.setval('protests_event_id_seq', 2, true);
 
 
 --
