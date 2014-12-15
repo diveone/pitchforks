@@ -47,7 +47,15 @@
 			</div>
 		</nav>
 	<div class="content">
-			Twitter and News Stream goes Here.
+		<h3>Current Protests</h3>
+		<% for (var i = 0; i < protests.length; i++) { %>
+			<h4><a href="/protests/<%= protests[i].event_id %>"><%= protests[i].name %></a></h4>
+			<ul>
+				<li><%= protests[i].description %></li>
+				<li><%= protests[i].date %></li>
+				<li><%= protests[i].locatioin %></li>
+			</ul>
+		<% } %>
 	</div>
 	
 </div>
