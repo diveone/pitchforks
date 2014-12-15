@@ -66,11 +66,11 @@ var localStrategy = new LocalStrategy(
 passport.use(localStrategy);
 
 // Configure Twitter authentication
-// var twitter = new twitterAPI({
-//     consumerKey: 'SHojLsO5Xo0ab3GoLvAX2Kefg',
-//     consumerSecret: 'PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD',
-//     callback: 'http://localhost:7000'
-// });
+var twitter = new twitterAPI({
+    consumerKey: 'SHojLsO5Xo0ab3GoLvAX2Kefg',
+    consumerSecret: 'PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD',
+    callback: 'http://localhost:7000'
+});
 
 // twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 //     if (error) {
@@ -101,7 +101,10 @@ passport.use(localStrategy);
 //     }
 // });
 
-// ROUTES: ALL USERS =================================================
+// ===================================================================
+// ROUTES: ALL USERS 
+// ===================================================================
+// Header links throughout site (authentication based)
 app.get('/', function(req,res) {
   res.render('index', { user: req.user });
 });
@@ -124,6 +127,9 @@ app.get('/results', function(req,res) {
   });
 });
 
+// ===================================================================
+// ROUTES: New User Registration 
+// ===================================================================
 // User sign-up submission with redirect to login form.
 app.post('/signup', function(req,res) {
   var registration = [req.body.username, req.body.email, req.body.password];
@@ -150,7 +156,10 @@ app.delete('/logout', function(req, res) {
   res.redirect('index');
 });
 
-// ROUTES: REGISTERED USERS ====================================================
+// ===================================================================
+// ROUTES: REGISTERED USER PAGES
+// ===================================================================
+// This section is protected
 
 app.get('/profile', function(req,res) {
 	var user = req.user;
@@ -184,6 +193,16 @@ app.get('/user/:id', function(req, res) {
 	});
 });
 
+// ===================================================================
+// MIDDELWARE
+// ===================================================================
+// Authenticate users
+function isLoggedIn(req, res, next) {
 
+	// if user is authenticated in the session, carry on
+	if (req.isAuthenticated())
+		return next();
 
-// ROUTES: Organizers
+	// if they aren't redirect them to the home page
+	res.redirect('/');
+}
