@@ -46,11 +46,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.configure(function() {
-  app.use(express.cookieParser('keyboard cat'));
-  app.use(express.session({ cookie: { maxAge: 60000 }}));
-  app.use(flash());
-});
+// Returns error 'has no method configure'
+// app.configure(function() {
+//   app.use(express.cookieParser('keyboard cat'));
+//   app.use(express.session({ cookie: { maxAge: 60000 }}));
+//   app.use(flash());
+// });
 
 // PORT
 app.listen(port, function() {
@@ -316,7 +317,7 @@ app.get('/auth/twitter/callback', function(req,res) {
   } else {
     res.send("you're not supposed to be here.");
   }
-})
+});
 
 app.get('/twitter', function(req,res) {
   res.render('twitter', { user: req.user });
@@ -325,7 +326,7 @@ app.get('/twitter', function(req,res) {
 app.post('/twitter', function(req,res) {
   var params = [userResults[0],userResults[1], req.body.email, req.body.password];
   db.query('INSERT INTO users (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
-    console.log(userResults[0]);
+    console.log(params);
     res.render("login", { user: req.user } );
   });
 });
