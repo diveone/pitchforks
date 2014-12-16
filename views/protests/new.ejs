@@ -36,7 +36,7 @@
 						<% if(user) { %>
           	  <li><a href="./logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
           	  <li><a href="./profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
-          	  <li><a href="/posts/new">Submit</a></li>
+          	  <li><a href="/posts/new"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
           	<% } else { %>
           	  <li><a href="./signup"><span class="fa fa-user"></span>Sign-Up</a></li>
           	  <li><a href="./login"><span class="fa fa-user"></span>Login</a></li>
@@ -46,16 +46,20 @@
 
 			</div>
 		</nav>
-		<form class="form-inline" role="form" method="POST" action="/login">
-			<div class="form-group">
+		<form class="form-inline" role="form" id="eventForm"method="POST" action="/submit">
+			<div class="form-group col-sm-6">
 		    	<div class="input-group">
 		    	  <label class="sr-only" for="exampleInputEmail2">Event Title</label>
-		    	  <input type="text" name="username" class="form-control" id="exampleInputEmail2" 	placeholder="Enter name" autofocus>
+		    	  <input type="text" name="name" class="form-control" id="exampleInputEmail2" 	placeholder="Enter name" autofocus>
 		    	</div>
 		  	</div>
-		  	<div class="input-group">
-      			<label class="sr-only" for="exampleInputEmail2">Date</label>
-      			<input type="date" name="date" class="form-control" id="exampleInputEmail2">
+        <div class="input-group col-sm-6">
+            <label class="sr-only" for="exampleInputEmail2">Date</label>
+            <input type="date" name="date" class="form-control" id="exampleInputEmail2">
+        </div>
+		  	<div class="input-group col-sm-12">
+      			<label class="sr-only" for="exampleInputEmail2">Description</label>
+      			<textarea name="description" class="form-control" rows="5" cols="50" id="exampleInputEmail2" form="eventForm"></textarea>
     		</div>
     		<!-- <div class="input-group">
       			<label class="sr-only" for="exampleInputEmail2">Time</label>
@@ -63,7 +67,7 @@
     		</div> -->
 		  	<div class="form-group">
 		    	<label class="sr-only" for="exampleInputPassword2">City, State</label>
-		    	<input type="text" name="location" class="form-control" id="exampleInputPassword2" placeholder="Location">
+		    	<input type="text" name="location" class="form-control" id="exampleInputPassword2" placeholder="City State">
 		  	</div>
 		  	<button type="submit" class="btn btn-default">Submit</button>
 		</form>

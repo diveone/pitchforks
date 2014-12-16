@@ -23,7 +23,7 @@
 			
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						<li><a href="index">Home</a></li>
+						<li><a href="/">Home</a></li>
 						<li><a href="#">About</a></li>
 					</ul>
 					<form class="navbar-form navbar-left" name ="search" role="search" method="GET" action="/results">
@@ -39,6 +39,7 @@
           	  <li><a href="/posts/new">Submit</a></li>
           	<% } else { %>
           	  <li><a href="./login"><span class="fa fa-user"></span> Login</a></li>
+              <li><a href="/auth/twitter"><img src="/sign-in-with-twitter-l.png" width="151" height="24"></a></li>
           	<% } %>
 					</ul>
 				</div>
