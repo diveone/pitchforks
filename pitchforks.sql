@@ -36,7 +36,7 @@ SET default_with_oids = false;
 CREATE TABLE protests (
     name character varying(255),
     location character varying(255),
-    date timestamp with time zone,
+    date date,
     submitted_by integer,
     event_id integer NOT NULL,
     description text
@@ -75,7 +75,8 @@ CREATE TABLE users (
     email character varying(255),
     password character varying(25),
     id integer NOT NULL,
-    avatar character varying(255)
+    avatar character varying(255),
+    twitter_id integer
 );
 
 
@@ -103,6 +104,18 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
+-- Name: users_protests; Type: TABLE; Schema: public; Owner: proto; Tablespace: 
+--
+
+CREATE TABLE users_protests (
+    id integer NOT NULL,
+    event_id integer NOT NULL
+);
+
+
+ALTER TABLE public.users_protests OWNER TO proto;
+
+--
 -- Name: event_id; Type: DEFAULT; Schema: public; Owner: proto
 --
 
@@ -121,8 +134,11 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 --
 
 COPY protests (name, location, date, submitted_by, event_id, description) FROM stdin;
-Protest SF	Berkely CA	2014-12-20 00:00:00-08	\N	1	\N
-\N	\N	\N	\N	2	There will be all day protests down at Berkeley against police.
+Protest SF	Berkely CA	2014-12-20	\N	1	\N
+Occupy Oakland	\N	\N	\N	2	There will be all day protests down at Berkeley against police.
+Millions March	Oakland CA	2015-01-05	\N	3	\N
+Occupy NYC	New York NY	2014-12-31	1	4	\N
+Ferguson Protest	Ferguson MO	2015-01-12	1	5	\N
 \.
 
 
@@ -130,19 +146,19 @@ Protest SF	Berkely CA	2014-12-20 00:00:00-08	\N	1	\N
 -- Name: protests_event_id_seq; Type: SEQUENCE SET; Schema: public; Owner: proto
 --
 
-SELECT pg_catalog.setval('protests_event_id_seq', 2, true);
+SELECT pg_catalog.setval('protests_event_id_seq', 5, true);
 
 
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: proto
 --
 
-COPY users (username, email, password, id, avatar) FROM stdin;
-\N	\N	\N	2	\N
-\N	\N	\N	3	\N
-Mary	mary@mary.me	test	4	\N
-Trent	trent@trent.me	test	5	\N
-kay	kay@gmail.com	test	1	https://avatars1.githubusercontent.com/u/6880594?v=3&s=460
+COPY users (username, email, password, id, avatar, twitter_id) FROM stdin;
+\N	\N	\N	2	\N	\N
+\N	\N	\N	3	\N	\N
+Mary	mary@mary.me	test	4	\N	\N
+Trent	trent@trent.me	test	5	\N	\N
+kay	kay@gmail.com	test	1	https://avatars1.githubusercontent.com/u/6880594?v=3&s=460	\N
 \.
 
 
@@ -151,6 +167,14 @@ kay	kay@gmail.com	test	1	https://avatars1.githubusercontent.com/u/6880594?v=3&s=
 --
 
 SELECT pg_catalog.setval('users_id_seq', 5, true);
+
+
+--
+-- Data for Name: users_protests; Type: TABLE DATA; Schema: public; Owner: proto
+--
+
+COPY users_protests (id, event_id) FROM stdin;
+\.
 
 
 --
@@ -170,11 +194,43 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: users_protests_pk; Type: CONSTRAINT; Schema: public; Owner: proto; Tablespace: 
+--
+
+ALTER TABLE ONLY users_protests
+    ADD CONSTRAINT users_protests_pk PRIMARY KEY (id, event_id);
+
+
+--
 -- Name: protests_submitted_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: proto
 --
 
 ALTER TABLE ONLY protests
     ADD CONSTRAINT protests_submitted_by_fkey FOREIGN KEY (submitted_by) REFERENCES users(id);
+
+
+--
+-- Name: userfk; Type: FK CONSTRAINT; Schema: public; Owner: proto
+--
+
+ALTER TABLE ONLY protests
+    ADD CONSTRAINT userfk FOREIGN KEY (submitted_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: users_protests_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: proto
+--
+
+ALTER TABLE ONLY users_protests
+    ADD CONSTRAINT users_protests_event_id_fkey FOREIGN KEY (event_id) REFERENCES protests(event_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: users_protests_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: proto
+--
+
+ALTER TABLE ONLY users_protests
+    ADD CONSTRAINT users_protests_id_fkey FOREIGN KEY (id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
