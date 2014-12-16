@@ -1,3 +1,3 @@
-require('./config/application');
+require('./application');
 
 App.start();
