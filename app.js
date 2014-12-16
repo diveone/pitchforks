@@ -93,30 +93,30 @@ passport.use(localStrategy);
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+  res.redirect('/login');
 }
 
 // Configure Twitter authentication
-var TWITTER_CONSUMER_KEY = "SHojLsO5Xo0ab3GoLvAX2Kefg";
-var TWITTER_CONSUMER_SECRET = "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD";
+// var TWITTER_CONSUMER_KEY = "SHojLsO5Xo0ab3GoLvAX2Kefg";
+// var TWITTER_CONSUMER_SECRET = "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD";
 
-passport.use(new TwitterStrategy({
-    consumerKey: TWITTER_CONSUMER_KEY,
-    consumerSecret: TWITTER_CONSUMER_SECRET,
-    callbackURL: "http://localhost:8000/auth/twitter/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
+// passport.use(new TwitterStrategy({
+//     consumerKey: TWITTER_CONSUMER_KEY,
+//     consumerSecret: TWITTER_CONSUMER_SECRET,
+//     callbackURL: "http://localhost:8000/auth/twitter/callback"
+//   },
+//   function(token, tokenSecret, profile, done) {
+//     // asynchronous verification, for effect...
+//     process.nextTick(function () {
       
-      // To keep the example simple, the user's Twitter profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Twitter account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
-    });
-  }
-));
+//       // To keep the example simple, the user's Twitter profile is returned to
+//       // represent the logged-in user.  In a typical application, you would want
+//       // to associate the Twitter account with a user record in your database,
+//       // and return that user instead.
+//       return done(null, profile);
+//     });
+//   }
+// ));
 
 // ===================================================================
 // ROUTES: PUBLIC
@@ -308,7 +308,7 @@ app.get('/auth/twitter/callback', function(req,res) {
       } else {
         req.session.oauth.access_token = oauth_access_token;
         req.session.oauth.access_token_secret = oauth_access_token_secret;        
-        console.log(results);
+        console.log("OAuth Results: "+ results, req.session.oauth);
         userResults = [results.user_id, results.screen_name];
         console.log(userResults);
         res.render("twitter", { user: req.user });
@@ -327,6 +327,8 @@ app.post('/twitter', function(req,res) {
   var params = [userResults[0],userResults[1], req.body.email, req.body.password];
   db.query('INSERT INTO users (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
     console.log(params);
+    console.log(err);
+    console.log(dbRes);
     res.render("login", { user: req.user } );
   });
 });

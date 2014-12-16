@@ -24,4 +24,10 @@ module.exports = function(app) {
 	app.get('/protests/edit', publicRoutes.editProtest);
 	app.patch('/protests/:id',publicRoutes.updateProtest);
 
+	// TWITTER AUTHENTICATION
+	app.get('/twitter'							, publicRoutes.twitter);
+	app.post('/twitter'							, publicRoutes.addTwitter);
+	app.get('/auth/twitter'					, publicRoutes.authTwitter);
+	app.get('/auth/twitter/callback', publicRoutes.authCallback);
+
 }
