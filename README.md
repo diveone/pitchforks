@@ -7,6 +7,7 @@ Find and organize protests happening near you.
 * Run DRY APP with `nodemon server.js`
 * The DRY routes and handlers are in the /routes folder
 * The DRY config(variables and such) is application.js
-* The DB file is the same for both versions
+* The DB config file is the same for both versions
+* The pitchforks.sql is the database with the relevant tables
 
 Old app is `nodemon app.js`. Works fine. The new app works except for the form pages (login and sign-up). The index page for the app is called from the database. 
