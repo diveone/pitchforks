@@ -47,7 +47,12 @@
 			</div>
 		</nav>
 	<div class="content">
-		Show selected event.
+			<h4><a href="/protests/<%= protests[i].event_id %>"><%= protest.name %></a></h4>
+			<ul>
+				<li><%= protest.description %></li>
+				<li><%= protest.date %></li>
+				<li><%= protest.locatioin %></li>
+			</ul>
 	</div>
 	
 </div>
