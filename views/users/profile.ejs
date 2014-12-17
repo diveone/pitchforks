@@ -51,14 +51,14 @@
 			</ul>
 			<p><a href="/edit">Edit</a></p>
 	</div>
-  <div class="col-sm-6">
-    <% if (user) {%>
+  <div class="content">
+    <!-- <% if (user) {%> -->
       <ul>
         <% for (var i = 0; i < protests.length; i++) { %>
-            <li><%= protests[i].event_id %></li>
+            <li><%= protests[i].name %></li>
         <% } %>
       </ul>
-    <% } %>
+    <!-- <% } %> -->
   </div>
 	
 </div>

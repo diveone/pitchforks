@@ -34,12 +34,13 @@
       				</form>
 					<ul class="nav navbar-nav navbar-right">
 						<% if(user) { %>
-          	  <li><a href="./logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
-          	  <li><a href="./profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
-          	  <li><a href="/posts/new">Submit</a></li>
+          	  <li><a href="/logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
+          	  <li><a href="/profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
+          	  <li><a href="/protests"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
           	<% } else { %>
-          	  <li><a href="/../signup"><span class="fa fa-user"></span>Sign-Up</a></li>
-          	  <li><a href="/../login"><span class="fa fa-user"></span>Login</a></li>
+          	  <li><a href="/signup"><span class="fa fa-user"></span>Sign-Up</a></li>
+          	  <li><a href="/login"><span class="fa fa-user"></span>Login</a></li>
+              <li><a href="/auth/twitter"><img src="/sign-in-with-twitter-l.png" width="151" height="24"></a></li>
           	<% } %>
 					</ul>
 				</div>
@@ -47,21 +48,18 @@
 			</div>
 		</nav>
 	<div class="content">
-<<<<<<< HEAD:views/protests/show.ejs
-			<h4><a href="/protests/<%= protests[i].event_id %>"><%= protest.name %></a></h4>
+			<h4><a href="/protests/<%= protest.event_id %>"><%= protest.name %></a></h4>
 			<ul>
 				<li><%= protest.description %></li>
 				<li><%= protest.date %></li>
 				<li><%= protest.locatioin %></li>
 			</ul>
-=======
   <% if (user) { %>
-		Show selected event.
+		Options
     <p><a href="#">Edit</a></p>
   <% } else { %>
     Show no edit option.
   <% } %>
->>>>>>> e3c40b7421f1814504184fcbb1a1f0f051f2d57a:views/show.ejs
 	</div>
 	
 </div>

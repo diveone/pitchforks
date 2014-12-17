@@ -176,13 +176,6 @@ app.post('/login', passport.authenticate('local',
     res.redirect('/');
 });
 
-// User logout
-// app.get('/logout', function(req,res) {
-//   db.query('SELECT * FROM protests', function(err, dbRes) {
-//       res.render('index', { user: req.user, protests: dbRes.rows });
-//     });
-// });
-
 app.delete('/logout', function(req, res) {
   req.logout();
   res.redirect('index');
@@ -192,16 +185,25 @@ app.delete('/logout', function(req, res) {
 // ROUTES: REGISTERED USER PAGES
 // ===================================================================
 // This section is protected
-
-app.get('/profile', ensureAuthenticated, function(req,res) {
-	var user = req.user;
-    db.query('SELECT * FROM users_protests', function(err, dbRes) {
-  	 res.render('users/profile', { user: user, protests: dbRes.rows });  
-    });
+app.get('/profile', function(req, res) {
+  var user = req.user;
+  db.query("SELECT * FROM protests WHERE submitted_by = $1", [req.params.id], function(err, dbRes) {
+    if(!err) {
+      res.render('users/profile', { user: user, protests: dbRes.rows });
+    }
+    console.log(err);
+  });
 });
+// app.get('/profile', ensureAuthenticated, function(req,res) {
+// 	var user = req.user;
+//   console.log(user.id);
+//     db.query('SELECT * FROM protests WHERE submitted_by = $1', user.id, function(err, dbRes) {
+//   	  res.render('users/profile', { user: user, protests: dbRes.rows });
+//     });
+// });
 
 // Edit user form
-app.get('/edit', function(req,res) {
+app.get('/edit', ensureAuthenticated, function(req,res) {
 	var user = req.user;
   res.render('users/edit', { user: user });
 });
@@ -232,13 +234,9 @@ app.get('/users/:id', function(req, res) {
 
 // PREVENT USING DIRECT URLS:
 // If logged in, create new protest. Else, send to login form.
-app.get('/protests', function(req,res) {
+app.get('/protests', ensureAuthenticated, function(req,res) {
 	var user = req.user;
-	if (user) {
-  	res.render('protests/new', { user: user });
-	} else {
-		res.render('login');
-	}
+  res.render('protests/new', { user: user });
 });
 
 // Submit a protest

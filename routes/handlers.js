@@ -62,6 +62,7 @@ exports.addSignup = function addSignup(req,res) {
 // 1.LOGIN NOT LOADING -- 2. STORE COOKIE IN DB?
 exports.userLogin =  function userLogin(req,res) {
   console.log(passport);
+  console.log(req.body);
 	passport.authenticate('local', {failureRedirect: 'login'}),
 	function(err,dbRes) { res.redirect('../index'); }
 };
