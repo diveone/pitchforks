@@ -6,7 +6,7 @@ db.config = {
   database: "pitchforks",
   port: 5432,
   host: "localhost",
-  user: "postgres"
+  // user: "postgres"
 };
 
 db.connect = function(runAfterConnecting) {

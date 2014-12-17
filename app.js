@@ -1,4 +1,6 @@
-// MODULES AND VARIABLES
+// ===================================================================
+// CONFIGURATION
+// ===================================================================
 var express       = require('express'),
     ejs           = require('ejs'),
     path          = require('path'),
@@ -15,8 +17,6 @@ var express       = require('express'),
     app           = express(),
     util          = require('util'),
     TwitterStrategy = require('passport-twitter').Strategy,
-    // twitterAPI 		= require('node-twitter-api'),
-    // RedisStore    = require('connect-redis')(express),
     port          = process.env['PORT'] || 8000;
 
 var OAuth= require('oauth').OAuth;
@@ -31,7 +31,9 @@ var oa = new OAuth(
   "HMAC-SHA1"
 );
 
-// CONFIGURATION
+// ===================================================================
+// MODULE SET-UP
+// ===================================================================
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
@@ -45,13 +47,6 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Returns error 'has no method configure'
-// app.configure(function() {
-//   app.use(express.cookieParser('keyboard cat'));
-//   app.use(express.session({ cookie: { maxAge: 60000 }}));
-//   app.use(flash());
-// });
 
 // PORT
 app.listen(port, function() {
@@ -89,50 +84,37 @@ var localStrategy = new LocalStrategy(
 
 passport.use(localStrategy);
 
-// ensureAuthenticated.js
+// USE TO AUTHENTICATE RESTRICTED ACCESS
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login');
 }
 
-// Configure Twitter authentication
-// var TWITTER_CONSUMER_KEY = "SHojLsO5Xo0ab3GoLvAX2Kefg";
-// var TWITTER_CONSUMER_SECRET = "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD";
-
-// passport.use(new TwitterStrategy({
-//     consumerKey: TWITTER_CONSUMER_KEY,
-//     consumerSecret: TWITTER_CONSUMER_SECRET,
-//     callbackURL: "http://localhost:8000/auth/twitter/callback"
-//   },
-//   function(token, tokenSecret, profile, done) {
-//     // asynchronous verification, for effect...
-//     process.nextTick(function () {
-      
-//       // To keep the example simple, the user's Twitter profile is returned to
-//       // represent the logged-in user.  In a typical application, you would want
-//       // to associate the Twitter account with a user record in your database,
-//       // and return that user instead.
-//       return done(null, profile);
-//     });
-//   }
-// ));
-
 // ===================================================================
-// ROUTES: PUBLIC
+// ROUTES: PUBLIC - ALL USERS
 // ===================================================================
-// All visitor can view and interact.
 
+// Homepage
 app.get('/', function(req, res) {
     db.query('SELECT * FROM protests', function(err, dbRes) {
       res.render('index', { user: req.user, protests: dbRes.rows });
     });   
 });
 
+// About
+app.get('/about', function(req, res) {
+    db.query('SELECT * FROM protests', function(err, dbRes) {
+      res.render('about', { user: req.user, protests: dbRes.rows });
+    });   
+});
+
+// Login page
 app.get('/login', function(req,res) {
   res.render('login', { user: req.user });
 });
 
+// Registration page
 app.get('/signup', function(req,res) {
   res.render('signup', { user: req.user });
 });
@@ -140,12 +122,19 @@ app.get('/signup', function(req,res) {
 // Navbar search form
 app.get('/results', function(req,res) {
   var params = req.query['search'];
-  request('https://api.twitter.com/1.1/search/tweets.json?q=%23' + params, function(error, response, body) {
-    var protests = JSON.parse(body);
-    console.log(protests);
-    res.render('results', { user: req.user, protests: protests });
+  db.query('SELECT '+params+'::protests', function(err,dbRes) {
+    res.render('results', { user: req.user, protests: dbRes.rows });
   });
 });
+
+// app.get('/results', function(req,res) {
+//   var params = req.query['search'];
+//   request('https://api.twitter.com/1.1/search/tweets.json?q=%23' + params, function(error, response, body) {
+//     var protests = JSON.parse(body);
+//     console.log(protests);
+//     res.render('results', { user: req.user, protests: protests });
+//   });
+// });
 
 // View selected event
 app.get('/protests/:id', function(req, res) {
@@ -159,6 +148,7 @@ app.get('/protests/:id', function(req, res) {
 // ===================================================================
 // ROUTES: SIGN-UP, LOGIN, LOGOUT 
 // ===================================================================
+
 // User sign-up form with redirect to login form
 app.post('/signup', function(req,res) {
   var registration = [req.body.username, req.body.email, req.body.password];
@@ -176,16 +166,19 @@ app.post('/login', passport.authenticate('local',
     res.redirect('/');
 });
 
-app.delete('/logout', function(req, res) {
-  req.logout();
-  res.redirect('index');
+app.get('/logout', function(req, res){   
+  // Destroy session, logout                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+  req.session.destroy(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+    res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 });
 
 // ===================================================================
-// ROUTES: REGISTERED USER PAGES
+// ROUTES: REGISTERED USER PAGES - ENSURE AUTHENTICATED
 // ===================================================================
-// This section is protected
-app.get('/profile', function(req, res) {
+
+// User profile - Non-registered users can't view
+app.get('/profile', ensureAuthenticated, function(req, res) {
   var user = req.user;
   db.query("SELECT * FROM protests WHERE submitted_by = $1", [req.params.id], function(err, dbRes) {
     if(!err) {
@@ -194,13 +187,6 @@ app.get('/profile', function(req, res) {
     console.log(err);
   });
 });
-// app.get('/profile', ensureAuthenticated, function(req,res) {
-// 	var user = req.user;
-//   console.log(user.id);
-//     db.query('SELECT * FROM protests WHERE submitted_by = $1', user.id, function(err, dbRes) {
-//   	  res.render('users/profile', { user: user, protests: dbRes.rows });
-//     });
-// });
 
 // Edit user form
 app.get('/edit', ensureAuthenticated, function(req,res) {
@@ -228,18 +214,16 @@ app.get('/users/:id', function(req, res) {
 });
 
 // ===================================================================
-// ROUTES: PROTESTS
+// ROUTES: PROTESTS - ENSURE AUTHENTICATED
 // ===================================================================
-// This section is protected
 
-// PREVENT USING DIRECT URLS:
-// If logged in, create new protest. Else, send to login form.
+// If logged in, create new protest.
 app.get('/protests', ensureAuthenticated, function(req,res) {
 	var user = req.user;
   res.render('protests/new', { user: user });
 });
 
-// Submit a protest
+// Submit protest form
 app.post('/submit', function(req,res) {
   var protestData = [req.body.name, req.body.description, req.body.location, req.body.date, req.user.id];
   db.query("INSERT INTO protests (name, description, location, date, submitted_by) VALUES ($1, $2, $3, $4, $5)", protestData, function(err, dbRes) {
@@ -250,15 +234,21 @@ app.post('/submit', function(req,res) {
   });
 });
 
-// PREVENT USING DIRECT URLS:
-// If logged in, protest edit form. Else, login please.
-app.get('/protests/edit', function(req,res) {
+// Participate - No redirect? How?
+app.post('/participate', function(req,res) {
+  var protester = [req.user.id, req.protests.event_id];
+  db.query("INSERT INTO users_protests (id, event_id) VALUES ($1, $2)", protester, function(err, dbRes) {
+    if(!err) {
+      res.redirect('/');
+      // Needs redirect to the protest submitted
+    }
+  });
+});
+
+// Edit a protest page
+app.get('/protests/edit', ensureAuthenticated, function(req,res) {
 	var user = req.user;
-  if (user) {
-    res.render('protests/edit', { user: user });
-  } else {
-    res.render('login');
-  }
+  res.render('protests/edit', { user: user });
 });
 
 // Submit protest edit form
@@ -278,7 +268,6 @@ app.get('/auth/twitter', function(req, res){
   oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
     if (error) {
       console.log(error);
-      res.send("yeah no. didn't work.")
     }
     else {
       req.session.oauth = {};
@@ -291,6 +280,7 @@ app.get('/auth/twitter', function(req, res){
   });
 });
 
+// Make variable available globally
 var userResults;
 
 app.get('/auth/twitter/callback', function(req,res) {
@@ -307,6 +297,7 @@ app.get('/auth/twitter/callback', function(req,res) {
         req.session.oauth.access_token = oauth_access_token;
         req.session.oauth.access_token_secret = oauth_access_token_secret;        
         console.log("OAuth Results: "+ results, req.session.oauth);
+        // Modify global variable
         userResults = [results.user_id, results.screen_name];
         console.log(userResults);
         res.render("twitter", { user: req.user });
@@ -317,11 +308,14 @@ app.get('/auth/twitter/callback', function(req,res) {
   }
 });
 
+// Twitter redirect page
 app.get('/twitter', function(req,res) {
   res.render('twitter', { user: req.user });
 });
 
+// Pitchforks form from Twitter redirect
 app.post('/twitter', function(req,res) {
+  // Use global userResults from OAuth to submit Twitter data
   var params = [userResults[0],userResults[1], req.body.email, req.body.password];
   db.query('INSERT INTO users (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
     console.log(params);
@@ -330,16 +324,3 @@ app.post('/twitter', function(req,res) {
     res.render("login", { user: req.user } );
   });
 });
-// ===================================================================
-// MIDDLEWARE
-// ===================================================================
-// Authenticate users
-function isLoggedIn(req, res, next) {
-
-	// if user is authenticated in the session, carry on
-	if (req.isAuthenticated())
-		return next();
-
-	// if they aren't redirect them to the home page
-	res.redirect('/');
-}

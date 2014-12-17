@@ -47,7 +47,17 @@
 			</div>
 		</nav>
 	<div class="content">
-			Search results go here.
+		<div class="content">
+		<h3>Search Results</h3>
+		<% for (var i = 0; i < protests.length; i++) { %>
+			<h4><a href="/protests/<%= protests[i].event_id %>"><%= protests[i].name %></a></h4>
+		<ul>
+			<li><%= protests[i].location %></li>
+      <li><%= protests[i].date %></li>
+      <li><%= protests[i].description %></li>
+		</ul>
+		<% } %>
+	</div>
 	</div>
 	
 </div>

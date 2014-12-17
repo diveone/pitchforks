@@ -4,5 +4,10 @@ body {
 }
 
 .navbar {
+	/*background: -webkit-linear-gradient(#b50000, #D10000); */
+  /*background: -o-linear-gradient(#b50000, #D10000); */
+  /*background: -moz-linear-gradient(#b50000, #D10000); */
+  /*background: linear-gradient(#b50000, #D10000); */
+  color: #fff;
   margin-bottom: 20px;
 }
