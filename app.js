@@ -166,11 +166,11 @@ app.post('/login', passport.authenticate('local',
     res.redirect('/');
 });
 
-app.get('/logout', function(req, res){   
-  // Destroy session, logout                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-  req.session.destroy(function(){                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-    res.redirect('/');                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-  });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+app.get('/logout', function(req, res){
+  // Destroy session, logout
+  req.session.destroy(function(){
+    res.redirect('/');
+  });
 });
 
 // ===================================================================
@@ -180,7 +180,7 @@ app.get('/logout', function(req, res){
 // User profile - Non-registered users can't view
 app.get('/profile', ensureAuthenticated, function(req, res) {
   var user = req.user;
-  db.query("SELECT * FROM protests WHERE submitted_by = $1", [req.params.id], function(err, dbRes) {
+  db.query("SELECT name FROM protests WHERE submitted_by = $1", [req.params.id], function(err, dbRes) {
     if(!err) {
       res.render('users/profile', { user: user, protests: dbRes.rows });
     }

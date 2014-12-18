@@ -24,7 +24,7 @@
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="/">Home</a></li>						
-						<li><a href="#">About</a></li>						
+						<li><a href="/about">About</a></li>						
 					</ul>
 					<form class="navbar-form navbar-left" name ="search" role="search" method="GET" action="/results">
       		  			<div class="form-group">
@@ -34,8 +34,8 @@
       				</form>
 					<ul class="nav navbar-nav navbar-right">
 						<% if(user) { %>
-          		<li><a href="./logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
-          		<li><a href="./profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
+          		<li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          		<li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
           		<li><a href="/protests"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
           	<% } %>
 					</ul>
@@ -51,7 +51,7 @@
 			</ul>
 			<p><a href="/edit">Edit</a></p>
 	</div>
-  <div class="content">
+  <div class="col-sm-6">
     <!-- <% if (user) {%> -->
       <ul>
         <% for (var i = 0; i < protests.length; i++) { %>
