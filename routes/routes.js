@@ -16,11 +16,11 @@ module.exports = function(app) {
 	app.delete('/logout'		, publicRoutes.logout);
 
 	// USERS ONLY -- AUTHORIZATION REQUIRED
-	app.get('/edit'					, publicRoutes.editPage);
+	app.get('/users/edit'		, publicRoutes.editPage);
 	app.patch('users/:id'		,	publicRoutes.editUser);
 
 	app.get('/protests'			, publicRoutes.newProtest);
-	app.post('/submit'			, publicRoutes.addProtest);
+	app.post('/protests'		, publicRoutes.addProtest);
 	app.get('/protests/edit', publicRoutes.editProtest);
 	app.patch('/protests/:id',publicRoutes.updateProtest);
 

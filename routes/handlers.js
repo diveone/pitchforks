@@ -1,4 +1,4 @@
-// Declare DB, since won't work from application.js
+// Declare, since won't work from application.js
 var db            = require('../db.js');
 var passport      = require('passport');
 var app2          = require('../application.js');
@@ -14,28 +14,33 @@ exports.index = function index(req,res) {
     });
 };
 
-// Login
+// About
+exports.about = function about(req,res) {
+  db.query('SELECT * FROM protests', function(err, dbRes) {
+      res.render('about', { user: req.user, protests: dbRes.rows });
+    });
+};
+
+// Login Link
 exports.login = function login(req,res) {
   res.render('login', { user: req.user });
 };
 
-// Sign-up for Pitchforks
+// Sign-up Link
 exports.signup = function signup(req,res) {
 	res.render('signup', { user: req.user });
 };
 
-// Navbar search form 
+// Navbar Search Form 
 exports.results = function results(req,res) {
 	var params = req.query['search'];
-  request('https://api.twitter.com/1.1/search/tweets.json?q=%23' + params, 
-  	function(error, response, body) {
-    	var protests = JSON.parse(body);
-    	console.log(protests);
-    	res.render('results', { user: req.user, protests: protests });
+  db.query('SELECT * FROM protests WHERE location ~* $1 OR name ~* $1' + params, 
+  	function(error, response) {
+    	res.render('results', { user: req.user, protests: dbRes.rows });
   });
 };
 
-// View selected protest 
+// View Selected Protest 
 exports.show = function results(req,res) {
 	db.query("SELECT * FROM protests WHERE event_id = $1", [req.params.id], 
 		function(err, dbRes) {
@@ -49,6 +54,7 @@ exports.show = function results(req,res) {
 // FORM HANDLERS
 // **********************
 
+// SIGN-UP FORM
 exports.addSignup = function addSignup(req,res) {
 	var registration = [req.body.username, req.body.email, req.body.password];
   db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", registration, function(err, dbRes) {
@@ -67,10 +73,11 @@ exports.userLogin =  function userLogin(req,res) {
 	function(err,dbRes) { res.redirect('../index'); }
 };
 
-// LOGOUT
+// LOGOUT LINK
 exports.logout = function logout(req,res) {
-  req.logout();
-  res.redirect('index');
+  req.session.destroy(function(){
+    res.redirect('/');
+  });
 };
 
 // ************************************
@@ -79,8 +86,7 @@ exports.logout = function logout(req,res) {
 
 // EDIT USER FORM - TEST
 exports.editPage = function editPage(req,res) {
-  var user = req.user;
-  res.render('users/edit', { user: user });
+  res.render('users/edit', { user: req.user });
 };
 
 // EDIT USER DB UPDATE - TEST

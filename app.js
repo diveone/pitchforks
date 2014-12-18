@@ -109,34 +109,25 @@ app.get('/about', function(req, res) {
     });   
 });
 
-// Login page
+// Login Link
 app.get('/login', function(req,res) {
   res.render('login', { user: req.user });
 });
 
-// Registration page
+// Sign-up Link
 app.get('/signup', function(req,res) {
   res.render('signup', { user: req.user });
 });
 
-// Navbar search form
+// Navbar Search Form
 app.get('/results', function(req,res) {
   var params = req.query['search'];
-  db.query('SELECT '+params+'::protests', function(err,dbRes) {
+  db.query('SELECT * FROM protests WHERE location ~* $1 OR name ~* $1', [params], function(err,dbRes) {
     res.render('results', { user: req.user, protests: dbRes.rows });
   });
 });
 
-// app.get('/results', function(req,res) {
-//   var params = req.query['search'];
-//   request('https://api.twitter.com/1.1/search/tweets.json?q=%23' + params, function(error, response, body) {
-//     var protests = JSON.parse(body);
-//     console.log(protests);
-//     res.render('results', { user: req.user, protests: protests });
-//   });
-// });
-
-// View selected event
+// View Specific Protest
 app.get('/protests/:id', function(req, res) {
   db.query("SELECT * FROM protests WHERE event_id = $1", [req.params.id], function(err, dbRes) {
     if(!err) {
@@ -146,10 +137,10 @@ app.get('/protests/:id', function(req, res) {
 });
 
 // ===================================================================
-// ROUTES: SIGN-UP, LOGIN, LOGOUT 
+// ROUTES: FORMS
 // ===================================================================
 
-// User sign-up form with redirect to login form
+// User Sign-up Form
 app.post('/signup', function(req,res) {
   var registration = [req.body.username, req.body.email, req.body.password];
   db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", registration, function(err, dbRes) {
@@ -160,12 +151,13 @@ app.post('/signup', function(req,res) {
   });
 });
 
-// If login credentials are in database, success. Else, login again.
+// User Login Form
 app.post('/login', passport.authenticate('local', 
   {failureRedirect: 'login' }), function(req, res) {
     res.redirect('/');
 });
 
+// User Logout Link
 app.get('/logout', function(req, res){
   // Destroy session, logout
   req.session.destroy(function(){
@@ -177,10 +169,10 @@ app.get('/logout', function(req, res){
 // ROUTES: REGISTERED USER PAGES - ENSURE AUTHENTICATED
 // ===================================================================
 
-// User profile - Non-registered users can't view
+// User Profile
 app.get('/profile', ensureAuthenticated, function(req, res) {
   var user = req.user;
-  db.query("SELECT name FROM protests WHERE submitted_by = $1", [req.params.id], function(err, dbRes) {
+  db.query("SELECT name FROM protests WHERE submitted_by = $1", [req.user.id], function(err, dbRes) {
     if(!err) {
       res.render('users/profile', { user: user, protests: dbRes.rows });
     }
@@ -189,12 +181,12 @@ app.get('/profile', ensureAuthenticated, function(req, res) {
 });
 
 // Edit user form
-app.get('/edit', ensureAuthenticated, function(req,res) {
+app.get('users/edit', ensureAuthenticated, function(req,res) {
 	var user = req.user;
   res.render('users/edit', { user: user });
 });
 
-// Submit edits
+// Submit edits -- Needs Authentication, url id to req.user.id
 app.patch('/users/:id', function(req, res) {
 	var userData = [req.body.username, req.body.email, req.body.avatar, req.params.id];
 	db.query("UPDATE users SET username = $1, email = $2, avatar = $3 WHERE id = $4", userData, function(err, dbRes) {
@@ -224,7 +216,7 @@ app.get('/protests', ensureAuthenticated, function(req,res) {
 });
 
 // Submit protest form
-app.post('/submit', function(req,res) {
+app.post('/protests', function(req,res) {
   var protestData = [req.body.name, req.body.description, req.body.location, req.body.date, req.user.id];
   db.query("INSERT INTO protests (name, description, location, date, submitted_by) VALUES ($1, $2, $3, $4, $5)", protestData, function(err, dbRes) {
     if(!err) {
