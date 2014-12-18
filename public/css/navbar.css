@@ -11,3 +11,25 @@ body {
   color: #fff;
   margin-bottom: 20px;
 }
+
+/* CUSTOM TWEAKS */
+.protestbg {
+	background-image: url(/p-redfists.jpg);
+	height: 200px;
+}
+
+#slogan, #title {
+	color: #fff;
+}
+
+@-webkit-keyframes greenPulse {
+  from { background-color: #A10000; -webkit-box-shadow: 0 0 9px #333; }
+  50% { background-color: #D10202; -webkit-box-shadow: 0 0 18px #D10202; }
+  to { background-color: #A10000; -webkit-box-shadow: 0 0 9px #333; }
+}
+button.green {
+	border: red;
+  -webkit-animation-name: greenPulse;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+}
