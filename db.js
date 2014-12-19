@@ -41,4 +41,6 @@ db.query = function(statement, params, callback){
   });
 };
 
+// Heroku DB Link
+// postgres://jskkmojmrdkgwr:lfooOMVWDrT60HKMYCWxLW2VNV@ec2-54-163-250-41.compute-1.amazonaws.com:5432/d1028jfm8s0pe2
 module.exports = db;
