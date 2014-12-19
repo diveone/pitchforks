@@ -56,7 +56,22 @@
 		</nav>
 		
 	<div class="content">
-			Show selected user.
+			<div class="col-sm-4">
+
+  <!-- USER PROFILE INFO -->
+  <div class="panel panel-default">
+    <div class="panel-heading profile-title">
+      <h3><%= user.username %></h3>
+      <img class="img-responsive img-rounded profile-title" src="<%= user.avatar %>" width="100px">
+    </div>
+    <div class="panel-body">
+      <ul >
+        <li><%= user.location %></li>
+      </ul>
+        <a class="btn btn-danger btn-sm" href="#">Contact</a>
+    </div>
+  </div>
+  </div>
 	</div>
 	
 </div>

@@ -142,8 +142,8 @@ app.get('/protests/:id', function(req, res) {
 
 // User Sign-up Form
 app.post('/signup', function(req,res) {
-  var registration = [req.body.username, req.body.email, req.body.password];
-  db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)", registration, function(err, dbRes) {
+  var registration = [req.body.username, req.body.email, req.body.loc, req.body.avatar, req.body.password];
+  db.query("INSERT INTO users (username, email, location, avatar, password) VALUES ($1, $2, $3, $4, $5)", registration, function(err, dbRes) {
     if(!err) {
       res.redirect('/login');
       // How to write successRedirect and successFlash?
@@ -192,12 +192,14 @@ app.patch('/users/:id', function(req, res) {
 	db.query("UPDATE users SET username = $1, email = $2, location = $3, avatar = $4 WHERE id = $5", userData, function(err, dbRes) {
 		if (!err) {
 			res.redirect('/profile');
-		}
+		} else {
+      console.log(err);
+    }
 	});
 });
 
 // View selected user profile
-app.get('/users/:id', function(req, res) {
+app.get('/users/:id', ensureAuthenticated, function(req, res) {
 	db.query("SELECT * FROM users WHERE id = $1", [req.params.id], function(err, dbRes) {
 		if(!err) {
 			res.render('users/show', { user: dbRes.rows[0] });
@@ -226,7 +228,7 @@ app.post('/protests', function(req,res) {
   });
 });
 
-// Participate - No redirect? How?
+// COMING SOON - Participate - No redirect? How?
 app.post('/participate', function(req,res) {
   var protester = [req.user.id, req.protests.event_id];
   db.query("INSERT INTO users_protests (id, event_id) VALUES ($1, $2)", protester, function(err, dbRes) {
@@ -251,7 +253,7 @@ app.patch('/protests/:id', function(req, res) {
 	var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.params.id];
 	db.query("UPDATE protests SET name = $1, date = $2, description = $3, location = $4 WHERE event_id = $5", protestData, function(err, dbRes) {
 		if (!err) {
-			res.redirect(req.params.id);
+			res.redirect('/protests/'+req.params.id);
 		}
 	});
 });
