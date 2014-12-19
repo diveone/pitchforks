@@ -3,3 +3,7 @@ help.js
 node_modules/
 npm-debug.log
 mapbox.csv
+pitchforks1.sql
+server.js
+application.js
+routes

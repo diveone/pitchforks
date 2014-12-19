@@ -8,40 +8,46 @@
 </head>
 <body>
 <div class="container">
+  
+  <!-- NAVIGATION SETUP -->
   <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
-        
+
+        <!-- NAVIGATION RESPONSIVE TOGGLE -->
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pitchforksnav">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Pitchforks</a>
+          <a class="navbar-brand" href="/">Pitchforks</a>
         </div>
-      
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>           
-            <li><a href="/about">About</a></li>           
+        
+        <!-- NAVIGATION LINKS -->
+        <div class="collapse navbar-collapse" id="pitchforksnav">
+          <ul class="nav navbar-nav">           
+            <li><a href="/about">About</a></li>
           </ul>
 
+          <!-- SEARCH FORM -->
           <form class="navbar-form navbar-left" name ="search" role="search" method="GET" action="/results">
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search for protests">
+              <input type="text" name='search' class="form-control" placeholder="Search for protests">
             </div>
             <button type="submit" class="btn btn-default">Find</button>
           </form>
 
-          <ul class="nav navbar-nav navbar-right"> 
+          <!-- NAV RIGHT SIDE -->
+          <ul class="nav navbar-nav navbar-right">
             <% if(user) { %>
-              <li><a href="/logout"><span class="glyphicon glyphicon-logout"></span> Logout</a></li>
+              <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
               <li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
               <li><a href="/protests"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
-            <% } else { %>
-              <li><a href="/signup"><span class="glyph glypicon-pencil"></span>Sign-Up</a></li>
-              <li><a href="/login"><span class="glyph glyphicon-log-in"></span>Login</a></li>
+            <% } else { %>                      
+              <li><a href="/signup"><span class="glyphicon glyphicon-pencil"></span> Sign-Up</a></li>
+              <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              <li><a href="/auth/twitter"><img src="/sign-in-with-twitter-l.png" width="151" height="24"></a></li>
             <% } %>
           </ul>
         </div>
