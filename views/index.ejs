@@ -75,7 +75,7 @@
   <!-- COLUMN 1 -->
 	<div class="col-sm-6">
 		<% for (i; i < protests.length / 2; i++) { %>
-			<div class="list-group">
+			<!-- <div class="list-group"> -->
         <a href="/protests/<%= protests[i].event_id %>" class="list-group-item">
           <h4 class="event-title"><%= protests[i].name %></h4>
 				  <p>
@@ -84,7 +84,7 @@
           </p>
           <p><%= protests[i].description %></p>
         </a>
-      </div>
+      <!-- </div> -->
 		<% } %>
 	</div>
 
