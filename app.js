@@ -217,8 +217,8 @@ app.get('/protests', ensureAuthenticated, function(req,res) {
 
 // Submit protest form
 app.post('/protests', function(req,res) {
-  var protestData = [req.body.name, req.body.description, req.body.location, req.body.date, req.user.id];
-  db.query("INSERT INTO protests (name, description, location, date, submitted_by) VALUES ($1, $2, $3, $4, $5)", protestData, function(err, dbRes) {
+  var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.user.id];
+  db.query("INSERT INTO protests (name, date, description, location, submitted_by) VALUES ($1, $2, $3, $4, $5)", protestData, function(err, dbRes) {
     if(!err) {
       res.redirect('/');
       // Needs redirect to the protest submitted
