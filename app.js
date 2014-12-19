@@ -123,7 +123,7 @@ app.get('/signup', function(req,res) {
 app.get('/results', function(req,res) {
   var params = req.query['search'];
   db.query('SELECT * FROM protests WHERE location ~* $1 OR name ~* $1', [params], function(err,dbRes) {
-    res.render('results', { user: req.user, protests: dbRes.rows });
+    res.render('results', { user: req.user, protests: dbRes.rows, search: params });
   });
 });
 

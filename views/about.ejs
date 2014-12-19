@@ -8,37 +8,44 @@
 </head>
 <body>
 <div class="container">
+
+	<!-- NAVIGATION SETUP -->
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
-				
+
+				<!-- NAVIGATION RESPONSIVE TOGGLE -->
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pitchforksnav">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
           </button>
-					<a class="navbar-brand" href="#">Pitchforks</a>
+					<a class="navbar-brand" href="/">Pitchforks</a>
 				</div>
-			
-				<div id="navbar" class="navbar-collapse collapse">
-					<ul class="nav navbar-nav">
-						<li><a href="/">Home</a></li>						
+				
+				<!-- NAVIGATION LINKS -->
+				<div class="collapse navbar-collapse" id="pitchforksnav">
+					<ul class="nav navbar-nav">						
 						<li><a href="/about">About</a></li>
 					</ul>
+
+					<!-- SEARCH FORM -->
 					<form class="navbar-form navbar-left" name ="search" role="search" method="GET" action="/results">
       		  <div class="form-group">
-      		    <input type="text" class="form-control" placeholder="Search for protests">
+      		    <input type="text" name='search' class="form-control" placeholder="Search for protests">
       		  </div>
       		  <button type="submit" class="btn btn-default">Find</button>
       		</form>
-				<ul class="nav navbar-nav navbar-right">
-					<% if(user) { %>
+
+      		<!-- NAV RIGHT SIDE -->
+					<ul class="nav navbar-nav navbar-right">
+						<% if(user) { %>
           	  <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-          	  <li><a href="./profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+          	  <li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
           	  <li><a href="/protests"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
-          	<% } else { %>
-          	  <li><a href="./signup"><span class="glyphicon glyphicon-pencil"></span> Sign-Up</a></li>
+          	<% } else { %>          		     	  
+          		<li><a href="./signup"><span class="glyphicon glyphicon-pencil"></span> Sign-Up</a></li>
           	  <li><a href="./login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
               <li><a href="/auth/twitter"><img src="/sign-in-with-twitter-l.png" width="151" height="24"></a></li>
           	<% } %>
@@ -47,17 +54,40 @@
 
 			</div>
 		</nav>
-    <iframe width='100%' height='520' frameborder='0' src='https://srogers.cartodb.com/viz/3ecef0b4-7cae-11e4-8bbb-0e9d821ea90d/embed_map' allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
-	<div class="content">
-	<p>Courtesy of <a href="http://mic.com/articles/106344/watch-eric-garner-and-michael-brown-protests-spread-in-one-beautiful-visualization">World.Mic</a></p>
-		<h3>Current Protests</h3>
-		<% for (var i = 0; i < protests.length; i++) { %>
-			<h4><a href="/protests/<%= protests[i].event_id %>"><%= protests[i].name %></a></h4>
-			<ul>
-				<li><%= protests[i].location %></li>
-        <li><%= protests[i].date %></li>
-        <li><%= protests[i].description %></li>
-			</ul>
+
+		<!-- CARTODB MAP -->
+  <iframe width='100%' height='520' frameborder='0' src='https://srogers.cartodb.com/viz/3ecef0b4-7cae-11e4-8bbb-0e9d821ea90d/embed_map' allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+	
+	<!-- VARIABLE FOR DUAL COLUMN DISPLAY -->
+	<% var i = 0 %>
+
+  <!-- COLUMN 1 -->
+	<div class="col-sm-6">
+		<% for (i; i < protests.length / 2; i++) { %>
+			<!-- <div class="list-group"> -->
+        <a href="/protests/<%= protests[i].event_id %>" class="list-group-item">
+          <h4 class="event-title"><%= protests[i].name %></h4>
+				  <p>
+            <span class="glyphicon glyphicon-globe"></span>  <%= protests[i].location %>   
+            <span class="glyphicon glyphicon-time"></span>   <%= protests[i].date %>
+          </p>
+          <p><%= protests[i].description %></p>
+        </a>
+      <!-- </div> -->
+		<% } %>
+	</div>
+
+  <!-- COLUMN 2 -->
+	<div class="col-sm-6">
+		<% for (i; i < protests.length; i++) { %>
+			<a href="/protests/<%= protests[i].event_id %>" class="list-group-item">
+        <h4 class="event-title"><%= protests[i].name %></h4>
+				<p>
+          <span class="glyphicon glyphicon-globe"></span>  <%= protests[i].location %>   
+          <span class="glyphicon glyphicon-time"></span>   <%= protests[i].date %>
+        </p>
+				<p><%= protests[i].description %></p>
+      </a>
 		<% } %>
 	</div>
 	

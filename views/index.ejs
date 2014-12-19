@@ -15,7 +15,7 @@
 	<nav class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
 
-				<!-- NAVIGATION TOGGLE -->
+				<!-- NAVIGATION RESPONSIVE TOGGLE -->
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#pitchforksnav">
               <span class="sr-only">Toggle navigation</span>
@@ -47,8 +47,8 @@
           	  <li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
           	  <li><a href="/protests"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
           	<% } else { %>          		     	  
-          		<li><a href="./signup"><span class="glyphicon glyphicon-pencil"></span> Sign-Up</a></li>
-          	  <li><a href="./login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          		<li><a href="/signup"><span class="glyphicon glyphicon-pencil"></span> Sign-Up</a></li>
+          	  <li><a href="#" data-toggle="modal" data-target="#mylogin"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
               <li><a href="/auth/twitter"><img src="/sign-in-with-twitter-l.png" width="151" height="24"></a></li>
           	<% } %>
 					</ul>
@@ -56,6 +56,38 @@
 
 			</div>
 		</nav>
+		
+		<!-- MODAL LOGIN -->
+		<div class="modal fade" id="mylogin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">		Close</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Login</h4>
+		      </div>
+		      <div class="modal-body">      		
+		      	<!-- LOGIN FORM -->
+		        <form class="form" role="form" method="POST" action="/login">
+							<div class="col-xs-6">
+	  					  <div class="input-group">
+	  					    <label class="sr" for="name">Username</label>
+	  					    <input type="text" name="username" class="form-control" id="name" placeholder="Enter name" autofocus>
+    						</div>
+  						</div>
+						  <div class="col-xs-6">
+						    <label class="sr" for="pw">Password</label>
+						    <input type="password" name="password" class="form-control" id="pw" placeholder="Password">
+						  </div>
+						  
+						 	<button type="submit "class="btn btn-danger btn-lg">Login</button>		  	
+						  
+						</form>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- HEADER LOGO AND TITLE -->
 		<div class="protestbg jumbotron">
 			<h1 id="title">Pitchforks</h1>
 			<h3 id="slogan">The time is now</h3>
@@ -95,11 +127,13 @@
         <h4 class="event-title"><%= protests[i].name %></h4>
 				<p>
           <span class="glyphicon glyphicon-globe"></span>  <%= protests[i].location %>   
-          <span class="glyphicon glyphicon-time"></span>   <%= protests[i].date %></p>
-			<p><%= protests[i].description %></p>
+          <span class="glyphicon glyphicon-time"></span>   <%= protests[i].date %>
+        </p>
+				<p><%= protests[i].description %></p>
       </a>
 		<% } %>
 	</div>
+
 </div>
 </body>
 </html>

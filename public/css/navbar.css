@@ -53,3 +53,8 @@ img.profile-title {
   font-weight: bold;
   color: #A10000;
 }
+
+div.imgfixed {
+  background: url(/p-fistclenched.jpg) no-repeat center center;
+  height: 100%;
+}
