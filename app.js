@@ -181,15 +181,15 @@ app.get('/profile', ensureAuthenticated, function(req, res) {
 });
 
 // Edit user form
-app.get('users/edit', ensureAuthenticated, function(req,res) {
+app.get('/users/edit', ensureAuthenticated, function(req,res) {
 	var user = req.user;
   res.render('users/edit', { user: user });
 });
 
 // Submit edits -- Needs Authentication, url id to req.user.id
 app.patch('/users/:id', function(req, res) {
-	var userData = [req.body.username, req.body.email, req.body.avatar, req.params.id];
-	db.query("UPDATE users SET username = $1, email = $2, avatar = $3 WHERE id = $4", userData, function(err, dbRes) {
+	var userData = [req.body.username, req.body.email, req.body.location, req.body.avatar, req.params.id];
+	db.query("UPDATE users SET username = $1, email = $2, location = $3, avatar = $4 WHERE id = $5", userData, function(err, dbRes) {
 		if (!err) {
 			res.redirect('/profile');
 		}
