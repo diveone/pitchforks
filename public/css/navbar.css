@@ -15,11 +15,14 @@ body {
 /* CUSTOM TWEAKS */
 .protestbg {
 	background-image: url(/p-redfists.jpg);
+  opacity: 0.9;
 	height: 200px;
 }
 
 #slogan, #title {
 	color: #fff;
+  font-weight: bold;
+  -webkit-text-stroke: 2px #fff;
 }
 
 @-webkit-keyframes greenPulse {
@@ -32,4 +35,20 @@ button.green {
   -webkit-animation-name: greenPulse;
   -webkit-animation-duration: 2s;
   -webkit-animation-iteration-count: infinite;
+}
+
+.profile-title {
+  font-weight: bold;
+  text-align: center;
+}
+
+img.profile-title {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.event-title {
+  font-weight: bold;
+  color: #A10000;
 }

@@ -24,7 +24,7 @@
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="/">Home</a></li>						
-						<li><a href="#">About</a></li>						
+						<li><a href="/about">About</a></li>						
 					</ul>
 
 					<form class="navbar-form navbar-left" name ="search" role="search" method="GET" action="/results">
@@ -36,12 +36,12 @@
 
 					<ul class="nav navbar-nav navbar-right"> 
 						<% if(user) { %>
-          	  <li><a href="/logout"><span class="glyphicon glyphicon-remove"></span> Logout</a></li>
-          	  <li><a href="/profile"><span class="glyphicon glyphicon-cog"></span> Profile</a></li>
+          	  <li><a href="/logout"><span class="glyphicon glyphicon-logout"></span> Logout</a></li>
+          	  <li><a href="/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
           	  <li><a href="/protests"><span class="glyphicon glyphicon-plus"></span> Submit</a></li>
           	<% } else { %>
-          	  <li><a href="/signup"><span class="fa fa-user"></span>Sign-Up</a></li>
-          	  <li><a href="/login"><span class="fa fa-user"></span>Login</a></li>
+          	  <li><a href="/signup"><span class="glyph glypicon-pencil"></span>Sign-Up</a></li>
+          	  <li><a href="/login"><span class="glyph glyphicon-log-in"></span>Login</a></li>
           	<% } %>
 					</ul>
 				</div>

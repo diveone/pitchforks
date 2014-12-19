@@ -238,17 +238,20 @@ app.post('/participate', function(req,res) {
 });
 
 // Edit a protest page
-app.get('/protests/edit', ensureAuthenticated, function(req,res) {
-	var user = req.user;
-  res.render('protests/edit', { user: user });
+app.get('/protests/:id/edit', ensureAuthenticated, function(req,res) {
+	db.query('SELECT * FROM protests WHERE event_id = $1', [req.params.id], function(err, dbRes) {
+    if (!err) {
+      res.render('protests/edit', { user: req.user, protest: dbRes.rows[0] });
+    }
+  });
 });
 
 // Submit protest edit form
 app.patch('/protests/:id', function(req, res) {
-	var protestData = [req.body.name, req.body.location, req.body.date, req.params.id];
-	db.query("UPDATE protests SET name = $1, location = $2, date = $3 WHERE event_id = $4", protestData, function(err, dbRes) {
+	var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.params.id];
+	db.query("UPDATE protests SET name = $1, date = $2, description = $3, location = $4 WHERE event_id = $5", protestData, function(err, dbRes) {
 		if (!err) {
-			res.redirect('protests/:id');
+			res.redirect(req.params.id);
 		}
 	});
 });
