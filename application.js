@@ -18,6 +18,8 @@ var express         = require('express'),
     TwitterStrategy = require('passport-twitter').Strategy,
     port            = process.env['PORT'] || 8000;
 
+var Firebase = require("firebase");
+
 // ===================================================================
 // CONFIGURE APP
 // ===================================================================
