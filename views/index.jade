@@ -1,0 +1,26 @@
+include layout
+
+	block content
+		- var i = 0
+		.col-sm-6
+			- for i; i < protests.length / 2; i++ {
+				a.list-group-item(href="/protests/"protests[i].event_id)
+					h4.event_title
+						= protests[i].name
+					p
+						span.glyphicon.glyphicon-globe protests[i].location
+						span.glyphicon.glyphicon-time protests[i].date
+					p
+						= protests[i].description
+			}
+		.col-sm-6
+			- for i; i < protests.length; i++ {
+				a.list-group-item(href="/protests/"protests[i].event_id)
+					h4.event_title
+						= protests[i].name
+					p
+						span.glyphicon.glyphicon-globe protests[i].location
+						span.glyphicon.glyphicon-time protests[i].date
+					p
+						= protests[i].description
+			}	

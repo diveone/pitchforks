@@ -1,24 +1,25 @@
 // ===================================================================
 // CONFIGURATION
 // ===================================================================
-var express       = require('express'),
-    ejs           = require('ejs'),
-    path          = require('path'),
-    request    		= require('request'),
-    oauth 				= require('oauth'),
-    bodyParser    = require('body-parser'),
-    cookieParser  = require('cookie-parser'),
-    session       = require('express-session'),
-    LocalStrategy = require('passport-local').Strategy,
-    passport      = require('passport'),
-    methodOverride= require('method-override'),
-    db            = require('./db.js'),
-    flash         = require('connect-flash'),
-    app           = express(),
-    util          = require('util'),
-    TwitterStrategy = require('passport-twitter').Strategy,
-    port          = process.env['PORT'] || 8000;
+var express           = require('express'),
+    ejs               = require('ejs'),
+    path              = require('path'),
+    request    		    = require('request'),
+    oauth 				    = require('oauth'),
+    bodyParser        = require('body-parser'),
+    cookieParser      = require('cookie-parser'),
+    session           = require('express-session'),
+    LocalStrategy     = require('passport-local').Strategy,
+    passport          = require('passport'),
+    methodOverride    = require('method-override'),
+    db                = require('./db.js'),
+    flash             = require('connect-flash'),
+    app               = express(),
+    util              = require('util'),
+    TwitterStrategy   = require('passport-twitter').Strategy,
+    port              = process.env['PORT'] || 8000;
 
+// TWITTER OAUTH VARIABLES
 var OAuth= require('oauth').OAuth;
 
 var oa = new OAuth(
@@ -27,7 +28,8 @@ var oa = new OAuth(
   "SHojLsO5Xo0ab3GoLvAX2Kefg",
   "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
   "1.0",
-  "http://pitchforks.herokuapp.com/auth/twitter/callback",
+  "http://localhost:8000/auth/twitter/callback",
+  // "http://pitchforks.herokuapp.com/auth/twitter/callback",
   "HMAC-SHA1"
 );
 
@@ -53,7 +55,9 @@ app.listen(port, function() {
   console.log("CHOO CHOO!");
 });
 
-// AUTHENTICATION
+// *********************************************
+// PASSPORT AUTHENTICATION
+// *********************************************
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -152,8 +156,11 @@ app.post('/signup', function(req,res) {
 });
 
 // User Login Form
-app.post('/login', passport.authenticate('local', 
-  {failureRedirect: 'login' }), function(req, res) {
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: 'login',
+  failureFlash: true }), 
+  function(req, res) {
     res.redirect('/');
 });
 
@@ -171,12 +178,10 @@ app.get('/logout', function(req, res){
 
 // User Profile
 app.get('/profile', ensureAuthenticated, function(req, res) {
-  var user = req.user;
-  db.query("SELECT name FROM protests WHERE submitted_by = $1", [req.user.id], function(err, dbRes) {
+  db.query("SELECT * FROM protests WHERE submitted_by = $1", [req.user.id], function(err, dbRes) {
     if(!err) {
-      res.render('users/profile', { user: user, protests: dbRes.rows });
+      res.render('users/profile', { user: req.user, protests: dbRes.rows });
     }
-    console.log(err);
   });
 });
 
@@ -233,7 +238,7 @@ app.post('/participate', function(req,res) {
   var protester = [req.user.id, req.protests.event_id];
   db.query("INSERT INTO users_protests (id, event_id) VALUES ($1, $2)", protester, function(err, dbRes) {
     if(!err) {
-      res.redirect('/');
+      res.redirect('/protests/'+ req.params.id);
       // Needs redirect to the protest submitted
     }
   });
@@ -253,7 +258,7 @@ app.patch('/protests/:id', function(req, res) {
 	var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.params.id];
 	db.query("UPDATE protests SET name = $1, date = $2, description = $3, location = $4 WHERE event_id = $5", protestData, function(err, dbRes) {
 		if (!err) {
-			res.redirect('/protests/'+req.params.id);
+			res.redirect('protests/'+ [req.params.id] );
 		}
 	});
 });
@@ -277,6 +282,9 @@ app.get('/auth/twitter', function(req, res){
   });
 });
 
+
+
+
 // Make variable available globally
 var userResults;
 
@@ -297,8 +305,14 @@ app.get('/auth/twitter/callback', function(req,res) {
         // Modify global variable
         userResults = [results.user_id, results.screen_name];
         console.log(userResults);
+        // Insert user into database
+        // var user = req.user;
+        // db.query('INSERT INTO users (twitter_id, username) VALUES ($1, $2)', userResults, function(err,dbRes) {
+        // res.render("index", { user: user } );
+        // });
+
         res.render("twitter", { user: req.user });
-      }
+      }  
     });
   } else {
     res.send("you're not supposed to be here.");
@@ -315,9 +329,6 @@ app.post('/twitter', function(req,res) {
   // Use global userResults from OAuth to submit Twitter data
   var params = [userResults[0],userResults[1], req.body.email, req.body.password];
   db.query('INSERT INTO users (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
-    console.log(params);
-    console.log(err);
-    console.log(dbRes);
     res.render("login", { user: req.user } );
   });
 });

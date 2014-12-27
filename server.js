@@ -1,3 +1,7 @@
-require('./application');
+var app 	= require('./application'),
+		port 	= process.env.PORT || 8000;
 
-App.start();
+// PORT
+app.listen(port, function() {
+  console.log("CHOO CHOO!");
+});

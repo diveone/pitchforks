@@ -1,4 +1,5 @@
-// CONFIGURE REQUIREMENTS
+// CONFIGURE VARIABLES
+// ===================================================
 var express         = require('express'),
     ejs             = require('ejs'),
     db              = require('./db.js'), // Currently inaccessible to handlers.js - Why?
@@ -15,59 +16,36 @@ var express         = require('express'),
     passport        = require('passport'),
     methodOverride  = require('method-override'),
     util            = require('util'),
-    TwitterStrategy = require('passport-twitter').Strategy,
+    logger          = require('morgan'),
+    // TwitterStrategy = require('passport-twitter').Strategy,
     port            = process.env['PORT'] || 8000;
 
-var Firebase = require("firebase");
-
-// ===================================================================
-// CONFIGURE APP
-// ===================================================================
-
-global.App = {
-  app: express(),
-  port: port,
-  version: packageJson.version,
-  root: path.join(__dirname, '.'),
-  appPath: function(path) {
-    return this.root + '/' + path;
-  },
-  require: function(path) {
-    return require(this.appPath(path));
-  },
-  env: env,
-  start: function() {
-    if (!this.started) {
-      this.started = true;
-      this.app.listen(this.port);
-      console.log("Running App Version " + App.version + " on port " + App.port + " in " + App.env + " mode");
-    }
-  },
-  route: function(path) {
-    return this.require("routes/" + path);
-  }
-}
+// ROUTE VARS
+var routes  = require('./routes/index');
+var users   = require('./routes/users');
 
 // ===================================================================
 // CONFIGURE MIDDLEWARE
 // ===================================================================
 
-App.app.set('view engine', 'ejs');
-App.app.use(express.static(__dirname + '/public'));
-App.app.use(methodOverride('_method'));
-App.app.use(bodyParser.json());
-App.app.use(bodyParser.urlencoded({'extended':true}));
-App.app.use(session({
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
+app.set('views', path.join(__dirname, 'views'));
+app.use(logger('dev'));
+app.use(methodOverride('_method'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({'extended':true}));
+app.use(session({
   secret: 'milk and cookies',
   cookie: { maxAge: 300000 },
   resave: false,
   saveUninitialized: true
 }));
-App.app.use(passport.initialize());
-App.app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
-App.require("routes/routes")(App.app);
-
+app.use('/', routes);
+app.use('/users', users);
 // ===================================================================
 // PASSPORT AUTHENTICATION
 // ===================================================================
@@ -117,27 +95,41 @@ var oa      = new OAuth(
   "SHojLsO5Xo0ab3GoLvAX2Kefg",
   "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
   "1.0",
+  // "http://pitchforks.herokuapp.com/auth/twitter/callback",
   "http://localhost:8000/auth/twitter/callback",
   "HMAC-SHA1"
 );
 
-var TWITTER_CONSUMER_KEY = "SHojLsO5Xo0ab3GoLvAX2Kefg";
-var TWITTER_CONSUMER_SECRET = "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD";
+//*************************************************
+// ERROR HANDLING
+//=================================================
 
-passport.use(new TwitterStrategy({
-    consumerKey: TWITTER_CONSUMER_KEY,
-    consumerSecret: TWITTER_CONSUMER_SECRET,
-    callbackURL: "http://localhost:8000/auth/twitter/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      
-      // To keep the example simple, the user's Twitter profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Twitter account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
+// 404
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
+
+// DEVELOPMENT -- STACKTRACE
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
     });
-  }
-));
+}
+
+// PRODUCTION -- NO STACKTRACE
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
+
+
+module.exports = app;

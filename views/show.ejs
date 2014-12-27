@@ -5,6 +5,8 @@
 	<!-- <link rel="stylesheet" type="text/css" href="/css/bootstrap.css"> -->
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/navbar.css">
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="/js/interact.js"></script>
 </head>
 <body>
 <div class="container">
@@ -67,11 +69,10 @@
      </p>
   <% if (user) { %>
     <p><a class="btn btn-default" href="/protests/<%= protest.event_id %>/edit">Edit</a>
+    <% } %>
     <button class="btn btn-danger join">Join <span class="badge">11</span></button>
-    <button class="btn btn-warning fist-pump">Fist Pump <span class="badge" id="fbadge">27</span></button></p>
-    <% } else { %>
-    <p><button class="btn btn-warning fist-pump">Fist Pump <span class="badge" id="fbadge">27</span></button></p>
-  <% } %>
+    <button class="btn btn-warning" id="fist">Fist Pump <span class="badge" id="fbadge"></span></button></p>
+    
 	</div>
 	<div class="col-sm-6">
 		<iframe
