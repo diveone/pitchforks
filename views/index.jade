@@ -1,26 +1,34 @@
-include layout
+extends layout
 
-	block content
-		- var i = 0
-		.col-sm-6
-			- for i; i < protests.length / 2; i++ {
-				a.list-group-item(href="/protests/"protests[i].event_id)
-					h4.event_title
-						= protests[i].name
-					p
-						span.glyphicon.glyphicon-globe protests[i].location
-						span.glyphicon.glyphicon-time protests[i].date
-					p
-						= protests[i].description
-			}
-		.col-sm-6
-			- for i; i < protests.length; i++ {
-				a.list-group-item(href="/protests/"protests[i].event_id)
-					h4.event_title
-						= protests[i].name
-					p
-						span.glyphicon.glyphicon-globe protests[i].location
-						span.glyphicon.glyphicon-time protests[i].date
-					p
-						= protests[i].description
-			}	
+block content
+	button.btn.btn-success.btn-lg.btn-block(class="green", data-toggle="collapse", data-target="#protests") Are you Ready?
+	#protests(class="collapse")
+		iframe(width='100%' height='520' frameborder='0' src='http://pitchforks.cartodb.com/viz/19448130-8616-11e4-9e46-0e018d66dc29/embed_map' allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen)
+	p
+		a(href="/about") See a historical timeline
+	h3 Current Protests
+	- var i = 0
+	.col-sm-6
+		- for (i; i < protests.length / 2; i++)
+			a.list-group-item(href="/protests/"+ protests[i].event_id)
+				h4.event_title
+					= protests[i].name
+				p
+					span.glyphicon.glyphicon-globe
+					= protests[i].location
+					span.glyphicon.glyphicon-time
+					= protests[i].date
+				p
+					= protests[i].description
+	.col-sm-6
+		- for (i; i < protests.length; i++)
+			a.list-group-item(href="/protests/"+ protests[i].event_id)
+				h4.event_title
+					= protests[i].name
+				p
+					span.glyphicon.glyphicon-globe
+					= protests[i].location
+					span.glyphicon.glyphicon-time
+					= protests[i].date
+				p
+					= protests[i].description			

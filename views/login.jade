@@ -1,9 +1,8 @@
-include layout
+extends layout
 
 block content
 	.col-sm-6
-		p
-			Getting involved has never been easier. Register to create movements or express interest in current protests!
+		p	Getting involved has never been easier. Register to create movements or express interest in current protests!
 		form.form(role="form" method="POST" action="/login")
 			.form-group
 				.input-group
@@ -17,4 +16,3 @@ block content
 				button.btn.btn-default(type="submit") Login 
 				span.loadMsg
 	.col-sm-6
-		.login-img

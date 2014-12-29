@@ -18,7 +18,7 @@ body
 				.collapse.navbar-collapse(id="pitchforksNav")
 					ul.navbar-nav.nav
 						li
-							a(href="#") About
+							a(href="/about") About
 					form.navbar-form.navbar-left(name='search', method='GET', action='/results')
 						.form-group
 							input.form-control(type='text', name='search')
@@ -45,7 +45,7 @@ body
 								a(href="/auth/twitter")
 									img(src="/img/sign-in-with-twitter-l.png")
 		block navigation
-		include login
-		h1= title
-		p Welcome to #{title}
+		.protestbg.jumbotron
+			h1#title Pitchforks
+			h3#slogan The time is now
 		block content			

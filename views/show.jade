@@ -1,16 +1,18 @@
-include layout
+extends layout
 
 block content
 	.list-group.col-sm-6
 		h3.event-title= protest.name
 		p
-			span.glypicon.glypicon-map-marker= protest.location
-			span.glypicon.glypicon-calendar= protest.date
+			span.glyphicon.glyphicon-map-marker
+			= protest.location
+			span.glyphicon.glyphicon-calendar
+			= protest.date
 			p= protest.description
 		if (user)
 			p
 				a.btn.btn-default(href="/protests/" + protest.event_id) Edit
-				button.btn.btn-danger.join
+				button.btn.btn-danger.join Join
 					span.badge
 				button.btn.btn-warning(id="fistPump") Fist Pump
 					span.badge(id="fistBadge")
@@ -19,5 +21,4 @@ block content
   		height="100%",
   		frameborder="3",
   		style="border: solid 3px black",
-  		src="https://www.google.com/maps/embed/v1/search?key=AIzaSyBtXqzdNepSM3-6I1YVPteqGPt4sDK6keA
-    &q="+ protest.location)
+  		src="https://www.google.com/maps/embed/v1/search?key=AIzaSyBtXqzdNepSM3-6I1YVPteqGPt4sDK6keA&q="+ protest.location)

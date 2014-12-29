@@ -28,7 +28,7 @@ var users   = require('./routes/users');
 // CONFIGURE MIDDLEWARE
 // ===================================================================
 
-app.set('view engine', 'ejs');
+app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
 app.set('views', path.join(__dirname, 'views'));
 app.use(logger('dev'));
