@@ -5,17 +5,19 @@ block content
 		h3.event-title= protest.name
 		p
 			span.glyphicon.glyphicon-map-marker
-			= protest.location
-			span.glyphicon.glyphicon-calendar
-			= protest.date
+			= ' ' + protest.location + ', '
+			span.glyphicon.glyphicon-calendar 
+			= ' ' + protest.date + ' '
 			p= protest.description
 		if (user)
 			p
-				a.btn.btn-default(href="/protests/" + protest.event_id) Edit
-				button.btn.btn-danger.join Join
-					span.badge
-				button.btn.btn-warning(id="fistPump") Fist Pump
-					span.badge(id="fistBadge")
+				a.btn.btn-default(href="/protests/" + protest.event_id + "/edit") Edit 
+				span= ' '
+					button.btn.btn-danger.join Join
+						span.badge
+				span= ' '
+					button.btn.btn-warning(id="fistPump")= 'Fist Pump '
+						span.badge(id="fistBadge")
 	.col-sm-6
 		iframe(width="100%",
   		height="100%",

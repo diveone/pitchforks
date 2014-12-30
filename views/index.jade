@@ -2,7 +2,7 @@ extends layout
 
 block content
 	button.btn.btn-success.btn-lg.btn-block(class="green", data-toggle="collapse", data-target="#protests") Are you Ready?
-	#protests(class="collapse")
+	.collapse(id="#protests")
 		iframe(width='100%' height='520' frameborder='0' src='http://pitchforks.cartodb.com/viz/19448130-8616-11e4-9e46-0e018d66dc29/embed_map' allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen)
 	p
 		a(href="/about") See a historical timeline
@@ -15,9 +15,9 @@ block content
 					= protests[i].name
 				p
 					span.glyphicon.glyphicon-globe
-					= protests[i].location
+					= ' ' + protests[i].location + ', '
 					span.glyphicon.glyphicon-time
-					= protests[i].date
+					= ' ' + protests[i].date
 				p
 					= protests[i].description
 	.col-sm-6
@@ -27,8 +27,8 @@ block content
 					= protests[i].name
 				p
 					span.glyphicon.glyphicon-globe
-					= protests[i].location
+					= ' ' + protests[i].location + ', '
 					span.glyphicon.glyphicon-time
-					= protests[i].date
+					= ' ' + protests[i].date
 				p
 					= protests[i].description			

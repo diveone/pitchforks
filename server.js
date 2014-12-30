@@ -3,5 +3,5 @@ var app 	= require('./application'),
 
 // PORT
 app.listen(port, function() {
-  console.log("CHOO CHOO!");
+  console.log("Running Pitchforks on port " + port);
 });

@@ -1,9 +1,9 @@
 window.onload = function() {
 	
 var clicks = 0;
-	$('#fist').click(function() {
+	$('#fistPump').click(function() {
 		clicks++;
-		$('#fbadge').html(clicks);
+		$('#fistBadge').html(clicks);
 	});
 	
 }

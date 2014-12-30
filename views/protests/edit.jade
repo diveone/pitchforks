@@ -1,4 +1,4 @@
-extends layout
+extends ../layout
 
 block content
 	.container
@@ -14,7 +14,7 @@ block content
 			.form-group
 				.input-group
 					label.sr(for="description") Description
-					textarea.form-control(name="description", rows="5", cols="50", id="description")
+					textarea.form-control(name="description", rows="5", cols="50", id="description")= protest.description
 			.form-group
 				.input-group
 					label.sr(for="location") City, State
