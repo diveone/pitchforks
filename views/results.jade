@@ -1,0 +1,16 @@
+include layout
+
+	block content
+		h1 Search Results for #{search}
+		.list-group.col-sm-6
+			- for (var i = 0; i < protests.length; i++)
+				a.list-group-item(href="/protests/"+ protests[i].event_id)
+					h4.event_title= protests[i].name
+					span.badge
+					p
+						span.glyphicon.glyphicon-map-marker
+						= protests[i].location
+					p
+						span.glyphicon.glyphicon-calendar
+						= protests[i].date
+		.col-sm-6

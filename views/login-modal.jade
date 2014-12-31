@@ -1,0 +1,19 @@
+.modal.fade(id="loginModal", tabindex="-1", role="dialog", aria-labelledby="loginModal", aria-hidden="true")
+	.modal-dialog
+		.modal-content
+			.modal-header
+				button.close(type="button", data-dismiss="modal")
+					span.sr-only Close
+					h4.modal-title(id="modalTitle") Login
+			.modal-body
+				form.form(method="POST", action="/login")
+					.form-group
+						.input-group
+							label.sr Username
+							input.form-control(type="text", id="name", autofocus)
+					.form-group
+						.input-group
+							label.sr Password
+							input.form-control(type="password", id="password")
+					.form-group
+						button.btn.btn-danger.btn-lg(type="submit") Login
