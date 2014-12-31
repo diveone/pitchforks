@@ -1,4 +1,4 @@
-extends ../layout
+include ../layout
 
 block content
 	.container
@@ -6,7 +6,7 @@ block content
 			.panel.panel-default
 				.panel-heading.profile-title
 					h3= user.username
-					img.img-responsive.img-rounded.profile-title(src= user.avatar, width='100px')
+					img.img-responsive.img-rounded.profile-title(src="img/"+ user.avatar, width='100px')
 				.panel-body
 					ul
 						li= user.email
@@ -16,7 +16,7 @@ block content
 		.col-sm-6
 			.list-group
 				h3 Protests You Created
-				for (var i = 0; i < protests.length; i++)
+				- for (var i = 0; i < protests.length; i++)
 					a.list-group-item(href="/protests/" + protests[i].event_id)
 						= protests[i].name
 						span.badge 3 
