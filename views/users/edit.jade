@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+	.container
+		.col-sm-8
+			form.form(method="POST", action="/users/"+ user.id +"?_method=PATCH")
+				.form.group
+					label.sr(for="username") Username
+					input.form-control(name="username", value= user.username)
+				.form-group
+					label.sr(for="email") Email
+					input.form-control(name="email", value= user.email)
+				.form-group
+					label.sr(for="location") Location (City,State)
+					input.form-control(name="location", value= user.location)
+				.form-group
+					label.sr(for="avatar") Avatar
+					input.form-control(type="file", name="avatar", id="avatar")
+					p.help-block Upload your avatar!
+				button.btn.btn-primar.btn-md(type="submit") Submit Changes
