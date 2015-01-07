@@ -1,0 +1,18 @@
+extends layout
+
+block content
+	.col-sm-6
+		p	Getting involved has never been easier. Register to create movements or express interest in current protests!
+		form.form(role="form" method="POST" action="/login")
+			.form-group
+				.input-group
+					label.sr Username
+					input.form.control(name="username", id="name", placeholder="Enter Username", autofocus)
+			.form-group
+				.input-group
+					label.sr Password
+					input.form.control(type="password", name="password", id="pw")
+			p
+				button.btn.btn-default(type="submit") Login 
+				span.loadMsg
+	.col-sm-6

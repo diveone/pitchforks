@@ -1,0 +1,16 @@
+extends layout
+
+block content
+	.container
+		h1 Twitter Sign-up
+		h4 Create a password and be on your way!
+		form.form-inline(role="form", method="POST", action="/twitter")
+			.form-group
+				.input-group
+					label.sr(for="avatar") Pick an Avatar
+					.input-group-addon
+					input.form-control(type="file", name="avatar")
+			.form-group
+				label.sr(for="password") Password
+				input.form-control(type="password", name="password", id="password")
+			button.btn.btn-default(type="submit") Sign Up

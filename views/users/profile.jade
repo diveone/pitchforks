@@ -1,0 +1,22 @@
+include ../layout
+
+block content
+	.container
+		.col-sm-4
+			.panel.panel-default
+				.panel-heading.profile-title
+					h3= user.username
+					img.img-responsive.img-rounded.profile-title(src="img/"+ user.avatar, width='100px')
+				.panel-body
+					ul
+						li= user.email
+						li= user.location
+			p
+				a.btn.btn-info.btn-lg.btn-block(href="/users/edit") Edit Profile
+		.col-sm-6
+			.list-group
+				h3 Protests You Created
+				- for (var i = 0; i < protests.length; i++)
+					a.list-group-item(href="/protests/" + protests[i].event_id)
+						= protests[i].name
+						span.badge 3 
