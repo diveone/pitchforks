@@ -1,13 +1,8 @@
 Pitchforks
 ==========
 
-Find and organize protests happening near you.
+Find and organize protests happening near you. For citizens, you can get immediate updates on where the protests are so you can join in and support them. For organizers, Pitchforks is a tool that provides a documented cause for that protest.
 
-## Notes current commit:
-* Run DRY APP with `nodemon server.js`
-* The DRY routes and handlers are in the /routes folder
-* The DRY config(variables and such) is application.js
-* The DB config file is the same for both versions
-* The pitchforks.sql is the database with the relevant tables
+Have you seen a protest and wondered what was going on? If you'd had Pitchforks, you could have not only found out how many people were there, but why they were there. You could have read law proposals and negotiations to learn about the grievances and what protesters hoped to achieve. 
 
-Old app is `nodemon app.js`. Works fine. The new app works except for the form pages (login and sign-up). The index page for the app is called from the database. 
+And you can do all that with just a couple of clicks.
