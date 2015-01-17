@@ -2,7 +2,9 @@ extends layout
 
 block content
 	.col-sm-6
-		p	Getting involved has never been easier. Register to create movements or express interest in current protests!
+		for message in flash
+			.alert(class='alert-danger alert-' + message.type)
+				p= message.message
 		form.form(role="form" method="POST" action="/login")
 			.form-group
 				.input-group

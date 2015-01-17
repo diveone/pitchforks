@@ -89,7 +89,7 @@ router.post('/signup', function(req,res) {
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: 'login',
-  failureFlash: true }), 
+  failureFlash: 'Incorrect credentials. Try again.'}), 
   function(req, res) {
     res.redirect('/');
 });
@@ -188,7 +188,7 @@ router.patch('/protests/:id', function(req, res) {
 	var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.params.id];
 	db.query("UPDATE protests SET name = $1, date = $2, description = $3, location = $4 WHERE event_id = $5", protestData, function(err, dbRes) {
 		if (!err) {
-			res.redirect('protests/'+ [req.params.id] );
+			res.redirect('/'+ [req.params.id] );
 		}
 	});
 });
@@ -202,8 +202,8 @@ router.get('/auth/twitter', function(req, res){
       console.log(error);
     }
     else {
-      req.session.oauth = {};
-      req.session.oauth.token = oauth_token;
+      req.session.oauth             = {};
+      req.session.oauth.token       = oauth_token;
       console.log('oauth.token: ' + req.session.oauth.token);
       req.session.oauth.token_secret = oauth_token_secret;
       console.log('oauth.token_secret: ' + req.session.oauth.token_secret);
@@ -226,7 +226,7 @@ router.get('/auth/twitter/callback', function(req,res) {
         console.log(error);
         res.send("yeah something broke.");
       } else {
-        req.session.oauth.access_token = oauth_access_token;
+        req.session.oauth.access_token        = oauth_access_token;
         req.session.oauth.access_token_secret = oauth_access_token_secret;        
         console.log("OAuth Results: "+ results, req.session.oauth);
         // Modify global variable
