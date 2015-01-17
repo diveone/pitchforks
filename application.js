@@ -101,8 +101,8 @@ var oa      = new OAuth(
   "SHojLsO5Xo0ab3GoLvAX2Kefg",
   "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
   "1.0",
-  // "http://pitchforks.herokuapp.com/auth/twitter/callback",
-  "http://localhost:8000/auth/twitter/callback",
+  "http://pitchforks.herokuapp.com/auth/twitter/callback",
+  // "http://localhost:8000/auth/twitter/callback",
   "HMAC-SHA1"
 );
 

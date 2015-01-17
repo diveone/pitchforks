@@ -1,6 +1,12 @@
 Pitchforks
 ==========
 
+Find and organize protests happening near you. For citizens, you can get immediate updates on where the protests are so you can join in and support them. For organizers, Pitchforks is a tool that provides a documented cause for that protest.
+
+Have you seen a protest and wondered what was going on? If you'd had Pitchforks, you could have not only found out how many people were there, but why they were there. You could have read law proposals and negotiations to learn about the grievances and what protesters hoped to achieve. 
+
+And you can do all that with just a couple of clicks.
+
 Organize protests and find protests happening NOW in your part of the world!
 
 Pitchforks was inspired by a very simple idea: create a small app that would allow users to see, in real-time, protests happening around the world. And I don't mean just newscasts: a map of protests that would show live participants displayed on a map, along side corroborating news coverage. My thought was to give everyone a sense of urgency about public matters and show them that there are many people who care about the issue. 
