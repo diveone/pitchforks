@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+	.container
+		.col-sm-6
+			form.form(role="form", method="POST", action="/protests")
+				.form-group
+					.input-group
+						label.sr(for="name") Title
+						input.form-control(name="name", id="name")
+				.form-group
+					.input-group
+						label.sr(for="date") Date
+						input.form-control(type="date" name="date", id="date")
+				.form-group
+					.input-group
+						label.sr(for="description") Description
+						input.form-control(name="description", id="description")
+				.form-group
+					.input-group
+						label.sr(for="location") Location
+						input.form-control(name="location", id="location")
+				button(type="submit", class="btn btn-default") Submit
