@@ -17,6 +17,7 @@ var express         = require('express'),
     methodOverride  = require('method-override'),
     util            = require('util'),
     logger          = require('morgan'),
+    flash           = require('flash'),
     // TwitterStrategy = require('passport-twitter').Strategy,
     port            = process.env['PORT'] || 8000;
 
@@ -41,6 +42,11 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(flash());
+// app.use(function(req, res, next) {  
+//   req.flash('error', 'This is a test.');    
+//   next();
+// });
 app.use(passport.initialize());
 app.use(passport.session());
 
