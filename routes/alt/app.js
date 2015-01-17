@@ -151,6 +151,8 @@ app.post('/signup', function(req,res) {
     if(!err) {
       res.redirect('/login');
       // How to write successRedirect and successFlash?
+    } else {
+      console.log(err);
     }
   });
 });
