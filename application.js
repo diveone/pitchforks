@@ -93,18 +93,7 @@ function ensureAuthenticated(req, res, next) {
 // ===================================================================
 // TWITTER CONFIGURATION
 // ===================================================================
-var OAuth   = require('oauth').OAuth;
-
-var oa      = new OAuth(
-  "https://api.twitter.com/oauth/request_token",
-  "https://api.twitter.com/oauth/access_token",
-  "SHojLsO5Xo0ab3GoLvAX2Kefg",
-  "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
-  "1.0",
-  "http://pitchforks.herokuapp.com/auth/twitter/callback",
-  // "http://localhost:8000/auth/twitter/callback",
-  "HMAC-SHA1"
-);
+// Moved to routes/index
 
 //*************************************************
 // ERROR HANDLING

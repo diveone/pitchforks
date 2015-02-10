@@ -14,8 +14,8 @@ var oa = new OAuth(
   "SHojLsO5Xo0ab3GoLvAX2Kefg",
   "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
   "1.0",
-  // "http://localhost:8000/auth/twitter/callback",
-  "http://pitchforks.herokuapp.com/auth/twitter/callback",
+  "http://localhost:8000/auth/twitter/callback",
+  // "http://pitchforks.herokuapp.com/auth/twitter/callback",
   "HMAC-SHA1"
 );
 
@@ -96,7 +96,6 @@ router.post('/login', passport.authenticate('local', {
 
 // User Logout Link
 router.get('/logout', function(req, res){
-  // Destroy session, logout
   req.session.destroy(function(){
     res.redirect('/');
   });
@@ -212,6 +211,14 @@ router.get('/auth/twitter', function(req, res){
   });
 });
 
+// Check Twitter ID against Postgres
+function checkId(id) {
+  // var params = results.user_id;
+  if (db.query('SELECT * FROM users WHERE twitter_id ~* $1 OR name ~* $1', [id]) {
+    var user = dbRes.rows[0];
+  } 
+}
+
 // Make variable available globally
 var userResults;
 
@@ -237,7 +244,7 @@ router.get('/auth/twitter/callback', function(req,res) {
         // db.query('INSERT INTO users (twitter_id, username) VALUES ($1, $2)', userResults, function(err,dbRes) {
         // res.render("index", { user: user } );
         // });
-
+        // checkId(results.user_id);
         res.render("twitter", { user: req.user });
       }  
     });
