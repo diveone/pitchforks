@@ -3,9 +3,12 @@
 		.modal-content
 			.modal-header
 				button.close(type="button", data-dismiss="modal")
-					span.sr-only Close
-					h4.modal-title(id="modalTitle") Login
+					span X
+				h4.modal-title(id="modalTitle") Login
 			.modal-body
+				for message in flash
+					.alert(class='alert-danger alert-' + message.type)
+						p= message.message
 				form.form(method="POST", action="/login")
 					.form-group
 						.input-group
@@ -17,3 +20,4 @@
 							input.form-control(type="password", id="password")
 					.form-group
 						button.btn.btn-danger.btn-lg(type="submit") Login
+						span.loadMsg

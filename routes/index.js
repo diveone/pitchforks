@@ -14,8 +14,8 @@ var oa = new OAuth(
   "SHojLsO5Xo0ab3GoLvAX2Kefg",
   "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
   "1.0",
-  // "http://localhost:8000/auth/twitter/callback",
-  "http://pitchforks.herokuapp.com/auth/twitter/callback",
+  "http://localhost:8000/auth/twitter/callback",
+  // "http://pitchforks.herokuapp.com/auth/twitter/callback",
   "HMAC-SHA1"
 );
 
@@ -96,7 +96,6 @@ router.post('/login', passport.authenticate('local', {
 
 // User Logout Link
 router.get('/logout', function(req, res){
-  // Destroy session, logout
   req.session.destroy(function(){
     res.redirect('/');
   });
@@ -174,6 +173,16 @@ router.post('/participate', function(req,res) {
   });
 });
 
+// Fist Pump (Going to AJAX)
+router.post('/pump', function(req,res) {
+  var protest = [req.protests.event_id, req.protests.support];
+  db.query("UPDATE protests SET support = $2 WHERE event_id = $1", protest, function(err, dbRes) {
+    if(err) {
+      console.log(err);
+    }
+  });
+});
+
 // Edit a protest page
 router.get('/protests/:id/edit', ensureAuthenticated, function(req,res) {
 	db.query('SELECT * FROM protests WHERE event_id = $1', [req.params.id], function(err, dbRes) {
@@ -232,13 +241,16 @@ router.get('/auth/twitter/callback', function(req,res) {
         // Modify global variable
         userResults = [results.user_id, results.screen_name];
         console.log(userResults);
-        // Insert user into database
-        // var user = req.user;
-        // db.query('INSERT INTO users (twitter_id, username) VALUES ($1, $2)', userResults, function(err,dbRes) {
-        // res.render("index", { user: user } );
-        // });
+        // Check for user in the DB
 
-        res.render("twitter", { user: req.user });
+        // Insert user into database
+        
+        var user = req.user;
+        db.query('INSERT INTO users (twitter_id, username) VALUES ($1, $2)', userResults, function(err,dbRes) {
+          res.render("twitter", { user: user } );
+        });
+        
+        // res.render("twitter", { user: req.user });
       }  
     });
   } else {

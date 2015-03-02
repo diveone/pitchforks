@@ -7,6 +7,11 @@ block content
 		form.form-inline(role="form", method="POST", action="/twitter")
 			.form-group
 				.input-group
+					label.sr(for="username") Choose Username
+					.input-group-addon
+					input.form-control(type="text", name="username")
+			.form-group
+				.input-group
 					label.sr(for="avatar") Pick an Avatar
 					.input-group-addon
 					input.form-control(type="file", name="avatar")

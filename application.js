@@ -18,6 +18,7 @@ var express         = require('express'),
     util            = require('util'),
     logger          = require('morgan'),
     flash           = require('flash'),
+    AWS             = require ('aws-sdk'),
     // TwitterStrategy = require('passport-twitter').Strategy,
     port            = process.env['PORT'] || 8000;
 
@@ -91,20 +92,24 @@ function ensureAuthenticated(req, res, next) {
 }
 
 // ===================================================================
-// TWITTER CONFIGURATION
+// AWS CONFIGURATION
 // ===================================================================
-var OAuth   = require('oauth').OAuth;
 
-var oa      = new OAuth(
-  "https://api.twitter.com/oauth/request_token",
-  "https://api.twitter.com/oauth/access_token",
-  "SHojLsO5Xo0ab3GoLvAX2Kefg",
-  "PIbEX0KAi60QbBhPe1ilEhcybt6OpgpFsIwbwb3M6I5Eb1vDtD",
-  "1.0",
-  "http://pitchforks.herokuapp.com/auth/twitter/callback",
-  // "http://localhost:8000/auth/twitter/callback",
-  "HMAC-SHA1"
-);
+// Set region
+AWS.config.region = 'us-west-2';
+
+// Create bucket
+var s3bucket = new AWS.S3({params: {Bucket: 'ojournal'}});
+s3bucket.createBucket(function() {
+  var params = {Key: 'key', Body: 'avatar'};
+  s3bucket.upload(params, function(err, data) {
+    if (err) {
+      console.log("Error: ", err);
+    } else {
+      console.log("Success.");
+    }
+  });
+});
 
 //*************************************************
 // ERROR HANDLING
