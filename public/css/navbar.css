@@ -26,14 +26,15 @@ body {
   text-shadow: 3px 3px #000;
 }
 
-@-webkit-keyframes greenPulse {
+@-webkit-keyframes redPulse {
   from { background-color: #A10000; -webkit-box-shadow: 0 0 9px #333; }
   50% { background-color: #D10202; -webkit-box-shadow: 0 0 18px #D10202; }
   to { background-color: #A10000; -webkit-box-shadow: 0 0 9px #333; }
 }
-button.green {
+button.red {
 	border: red;
-  -webkit-animation-name: greenPulse;
+  color: white;
+  -webkit-animation-name: redPulse;
   -webkit-animation-duration: 2s;
   -webkit-animation-iteration-count: infinite;
 }

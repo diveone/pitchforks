@@ -173,6 +173,16 @@ router.post('/participate', function(req,res) {
   });
 });
 
+// Fist Pump (Going to AJAX)
+router.post('/pump', function(req,res) {
+  var protest = [req.protests.event_id, req.protests.support];
+  db.query("UPDATE protests SET support = $2 WHERE event_id = $1", protest, function(err, dbRes) {
+    if(err) {
+      console.log(err);
+    }
+  });
+});
+
 // Edit a protest page
 router.get('/protests/:id/edit', ensureAuthenticated, function(req,res) {
 	db.query('SELECT * FROM protests WHERE event_id = $1', [req.params.id], function(err, dbRes) {
@@ -211,14 +221,6 @@ router.get('/auth/twitter', function(req, res){
   });
 });
 
-// Check Twitter ID against Postgres
-function checkId(id) {
-  // var params = results.user_id;
-  if (db.query('SELECT * FROM users WHERE twitter_id ~* $1 OR name ~* $1', [id]) {
-    var user = dbRes.rows[0];
-  } 
-}
-
 // Make variable available globally
 var userResults;
 
@@ -239,13 +241,16 @@ router.get('/auth/twitter/callback', function(req,res) {
         // Modify global variable
         userResults = [results.user_id, results.screen_name];
         console.log(userResults);
+        // Check for user in the DB
+
         // Insert user into database
-        // var user = req.user;
-        // db.query('INSERT INTO users (twitter_id, username) VALUES ($1, $2)', userResults, function(err,dbRes) {
-        // res.render("index", { user: user } );
-        // });
-        // checkId(results.user_id);
-        res.render("twitter", { user: req.user });
+        
+        var user = req.user;
+        db.query('INSERT INTO users (twitter_id, username) VALUES ($1, $2)', userResults, function(err,dbRes) {
+          res.render("twitter", { user: user } );
+        });
+        
+        // res.render("twitter", { user: req.user });
       }  
     });
   } else {

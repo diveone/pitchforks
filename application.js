@@ -18,6 +18,7 @@ var express         = require('express'),
     util            = require('util'),
     logger          = require('morgan'),
     flash           = require('flash'),
+    AWS             = require ('aws-sdk'),
     // TwitterStrategy = require('passport-twitter').Strategy,
     port            = process.env['PORT'] || 8000;
 
@@ -91,9 +92,24 @@ function ensureAuthenticated(req, res, next) {
 }
 
 // ===================================================================
-// TWITTER CONFIGURATION
+// AWS CONFIGURATION
 // ===================================================================
-// Moved to routes/index
+
+// Set region
+AWS.config.region = 'us-west-2';
+
+// Create bucket
+var s3bucket = new AWS.S3({params: {Bucket: 'ojournal'}});
+s3bucket.createBucket(function() {
+  var params = {Key: 'key', Body: 'avatar'};
+  s3bucket.upload(params, function(err, data) {
+    if (err) {
+      console.log("Error: ", err);
+    } else {
+      console.log("Success.");
+    }
+  });
+});
 
 //*************************************************
 // ERROR HANDLING
