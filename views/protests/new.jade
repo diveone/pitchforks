@@ -2,7 +2,7 @@ extends ../layout
 
 block content
 	.container
-		.col-sm-6
+		.col-sm-12
 			form.form(role="form", method="POST", action="/protests")
 				.form-group
 					.input-group
@@ -15,7 +15,8 @@ block content
 				.form-group
 					.input-group
 						label.sr(for="description") Description
-						input.form-control(name="description", id="description")
+						textarea.form-control(name="description", id="description")
+						script CKEDITOR.replace('description');
 				.form-group
 					.input-group
 						label.sr(for="location") Location

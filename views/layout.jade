@@ -6,7 +6,7 @@ html
 
 body
 	.container
-		nav.navbar.navbar-default(role="navigation")
+		nav.navbar.navbar-inverse(role="navigation")
 			.container-fluid
 				.navbar-header
 					button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#earfulNav", aria-expanded="false", aria-controls="navbar")
@@ -40,12 +40,13 @@ body
 								a(href="/signup")
 									span.glyphicon.glyphicon-pencil= ' Sign-up'
 							li
-								a(href="/login")
+								a(href="#" data-toggle="modal" data-target="#loginModal")
 									span.glyphicon.glyphicon-log-in= ' Login' 
 							li
 								a(href="/auth/twitter")
 									img(src="/img/sign-in-with-twitter-l.png")
 		block navigation
+		include login-modal
 		.protestbg.jumbotron
 			h1#title Pitchforks
 			h3#slogan The time is now
