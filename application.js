@@ -99,17 +99,17 @@ function ensureAuthenticated(req, res, next) {
 AWS.config.region = 'us-west-2';
 
 // Create bucket
-var s3bucket = new AWS.S3({params: {Bucket: 'ojournal'}});
-s3bucket.createBucket(function() {
-  var params = {Key: 'key', Body: 'avatar'};
-  s3bucket.upload(params, function(err, data) {
-    if (err) {
-      console.log("Error: ", err);
-    } else {
-      console.log("Success.");
-    }
-  });
-});
+// var s3bucket = new AWS.S3({params: {Bucket: 'ojournal'}});
+// s3bucket.createBucket(function() {
+//   var params = {Key: 'key', Body: 'avatar'};
+//   s3bucket.upload(params, function(err, data) {
+//     if (err) {
+//       console.log("Error: ", err);
+//     } else {
+//       console.log("Success.");
+//     }
+//   });
+// });
 
 //*************************************************
 // ERROR HANDLING
