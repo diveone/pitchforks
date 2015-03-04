@@ -69,14 +69,23 @@ router.get('/protests/:id', function(req, res) {
     }
   });
 });
-
+// News Search API
+router.get('/news'), function(req, res) {
+  console.log("Check for a pulse ...")
+  var title = document.getElementsByClassName('event-title');
+  request('http://api.feedzilla.com/v1/articles/search.json?q=' + encodeURIComponent(title.innerHTML), function(error, response, body) {
+    var articles = JSON.parse(body);
+    console.log(articles);
+    res.render('show', { articles: articles });
+  });
+}
 // ===================================================================
 // ROUTES: FORMS
 // ===================================================================
 
 // User Sign-up Form
 router.post('/signup', function(req,res) {
-  var registration = [req.body.username, req.body.email, req.body.loc, req.body.avatar, req.body.password];
+  var registration = [req.body.username, req.body.email, req.body.loc, 'default.jpg', req.body.password];
   db.query("INSERT INTO users (username, email, location, avatar, password) VALUES ($1, $2, $3, $4, $5)", registration, function(err, dbRes) {
     if(!err) {
       res.redirect('/login');
