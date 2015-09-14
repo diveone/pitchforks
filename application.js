@@ -2,10 +2,10 @@
 // ===================================================
 var express         = require('express'),
     ejs             = require('ejs'),
-    db              = require('./db.js'), // Currently inaccessible to handlers.js - Why?
+    db              = require('./db.js'),
     app             = express(),
     env             = process.env.NODE_ENV || 'development',
-    path            = require('path'), // Currently inaccessible to handlers.js - Why?
+    path            = require('path'),
     packageJson     = require('./package.json'),
     request         = require('request'),
     oauth           = require('oauth'),
@@ -44,8 +44,8 @@ app.use(session({
   saveUninitialized: true
 }));
 app.use(flash());
-// app.use(function(req, res, next) {  
-//   req.flash('error', 'This is a test.');    
+// app.use(function(req, res, next) {
+//   req.flash('error', 'This is a test.');
 //   next();
 // });
 app.use(passport.initialize());
@@ -96,20 +96,21 @@ function ensureAuthenticated(req, res, next) {
 // ===================================================================
 
 // Set region
-AWS.config.region = 'us-west-2';
+AWS.config.region = '';
 
 // Create bucket
-// var s3bucket = new AWS.S3({params: {Bucket: 'ojournal'}});
-// s3bucket.createBucket(function() {
-//   var params = {Key: 'key', Body: 'avatar'};
-//   s3bucket.upload(params, function(err, data) {
-//     if (err) {
-//       console.log("Error: ", err);
-//     } else {
-//       console.log("Success.");
-//     }
-//   });
-// });
+var s3bucket = new AWS.S3({params: {Bucket: ''}});
+
+s3bucket.createBucket(function() {
+  var params = {Key: 'key', Body: 'avatar'};
+  s3bucket.upload(params, function(err, data) {
+    if (err) {
+      console.log("Error: ", err);
+    } else {
+      console.log("Success.");
+    }
+  });
+});
 
 //*************************************************
 // ERROR HANDLING

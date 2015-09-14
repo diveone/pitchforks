@@ -1,4 +1,6 @@
-help.js
 node_modules/
-npm-debug.logpitchforks
-pitchforks/
+bower-components/
+npm-debug.log
+config/
+appspec.yml
+pitchforks.sublime-project
