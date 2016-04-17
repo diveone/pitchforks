@@ -7,3 +7,5 @@ pitchforks.sublime-project
 TODO.md
 deps.md
 alt/
+__pycache__/
+*.pyc

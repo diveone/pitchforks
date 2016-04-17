@@ -8,7 +8,7 @@ Base = declarative_base()
 engine = create_engine('postgresql://proto:admin@localhost:5432/pitchforks')
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'citizen'
 
     id = Column(Integer, primary_key=True)
     username = Column(String)
@@ -21,20 +21,18 @@ class User(Base):
     twitter_secret = Column(String)
     salt = Column(String)
 
-    protests = relationship("Protest", backref="users")
+    protests = relationship("Protest", backref="citizen")
 
 
 class Protest(Base):
-    __tablename__ = 'protests'
+    __tablename__ = 'protest'
 
     name = Column(String)
     location = Column(String)
     date = Column(Date)
     event_id = Column(Integer, primary_key=True)
-    submitted_by = Column(ForeignKey('users.id'))
+    submitted_by = Column(ForeignKey('citizen.id'))
     description = Column(Text)
     city = Column(String)
     state = Column(String(2))
     fist_pump = Column(Integer)
-
-    # user = relationship("User", backref="protest", order_by="User.id")
