@@ -2,11 +2,12 @@
 var db = {};
 var pg = require('pg');
 
-// LOCALHOST
 db.config = {
   database: "pitchforks",
   port: 5432,
-  host: "localhost"
+  host: "localhost",
+  user: process.env.dbUser,
+  password: process.env.dbPwd
 };
 
 db.connect = function(runAfterConnecting) {
@@ -31,7 +32,7 @@ db.query = function(statement, params, callback){
 
 // db.connect = function(runAfterConnecting) {
 //   console.log(process.env.DATABASE_URL);
-
+//
 //   pg.connect(process.env.DATABASE_URL, function(err, client, done){
 //     if (err) {
 //       console.error("OOOPS!!! SOMETHING WENT WRONG!", err);

@@ -26,28 +26,27 @@ body
 								button.btn.btn-default(type="submit") Search
 					ul.nav.navbar-nav.navbar-right
 						if user
-							li 
-								a(href="/logout")
-									span.glyphicon.glyphicon-log-out= ' Logout' 
 							li
-								a(href="/profile")
-									span.glyphicon.glyphicon-user= ' Profile' 
+								a(href="/logout")
+									span.glyphicon.glyphicon-log-out= ' Logout'
+							li
+								a(href="/users/profile")
+									span.glyphicon.glyphicon-user= ' Profile'
 							li
 								a(href="/protests")
-									span.glyphicon.glyphicon-plus= ' Submit' 
+									span.glyphicon.glyphicon-plus= ' Submit'
 						else
 							li
 								a(href="/signup")
 									span.glyphicon.glyphicon-pencil= ' Sign-up'
 							li
-								a(href="#" data-toggle="modal" data-target="#loginModal")
-									span.glyphicon.glyphicon-log-in= ' Login' 
+								a(href="/login")
+									span.glyphicon.glyphicon-log-in= ' Login'
 							li
 								a(href="/auth/twitter")
 									img(src="/img/sign-in-with-twitter-l.png")
 		block navigation
-		include login-modal
 		.protestbg.jumbotron
 			h1#title Pitchforks
 			h3#slogan The time is now
-		block content			
+		block content

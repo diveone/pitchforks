@@ -1,31 +1,31 @@
 // CONFIGURE VARIABLES
 // ===================================================
+require('./config/env.js');
 var express         = require('express'),
-    ejs             = require('ejs'),
+    // ejs             = require('ejs'),
     db              = require('./db.js'),
     app             = express(),
-    env             = process.env.NODE_ENV || 'development',
+    env             = app.get('env'),
     path            = require('path'),
     packageJson     = require('./package.json'),
     request         = require('request'),
     oauth           = require('oauth'),
     bodyParser      = require('body-parser'),
-    cookieParser    = require('cookie-parser'),
+    // cookieParser    = require('cookie-parser'),
+    cookieSession   = require('cookie-session'),
     session         = require('express-session'),
+    bcrypt          = require('bcrypt-nodejs'),
     LocalStrategy   = require('passport-local').Strategy,
     passport        = require('passport'),
     methodOverride  = require('method-override'),
-    util            = require('util'),
     logger          = require('morgan'),
     flash           = require('flash'),
-    AWS             = require ('aws-sdk'),
-    // TwitterStrategy = require('passport-twitter').Strategy,
     port            = process.env['PORT'] || 8000;
 
 // ROUTE VARS
 var routes  = require('./routes/index');
 var users   = require('./routes/users');
-
+var protests = require('./routes/protests');
 // ===================================================================
 // CONFIGURE MIDDLEWARE
 // ===================================================================
@@ -37,9 +37,11 @@ app.use(logger('dev'));
 app.use(methodOverride('_method'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended':true}));
+// app.use(cookieParser({secret: process.env.secret}))
+app.use(cookieSession({secret: process.env.secret}));
 app.use(session({
-  secret: 'milk and cookies',
-  cookie: { maxAge: 300000 },
+  secret: process.env.secret,
+  cookie: { secure: true, maxAge: 300000 },
   resave: false,
   saveUninitialized: true
 }));
@@ -48,21 +50,28 @@ app.use(flash());
 //   req.flash('error', 'This is a test.');
 //   next();
 // });
+
+// AUTHENTICATION
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', routes);
 app.use('/users', users);
+// app.use('/users', ensureAuthenticated);
+app.use('/protests', protests);
+// app.use('/protests', ensureAuthenticated);
 // ===================================================================
 // PASSPORT AUTHENTICATION
 // ===================================================================
 
 passport.serializeUser(function(user, done) {
+  console.log("Serialize user: %s", user.username);
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
   db.query('SELECT * FROM users WHERE id = $1', [id], function(err, dbRes) {
+    console.log("Deserialize user: %s", id);
     if (!err) { done(err, dbRes.rows[0]); }
   });
 });
@@ -70,47 +79,39 @@ passport.deserializeUser(function(id, done) {
 var localStrategy = new LocalStrategy(
   function(username, password, done) {
     db.query('SELECT * FROM users WHERE username = $1', [username], function(err, dbRes) {
+      if (err) {
+        console.error(err);
+        return done(err);
+      };
+      console.log('User query success: %s', dbRes.rows[0].username)
       var user = dbRes.rows[0];
-      console.log(username);
 
-      console.log(user);
-
-      if (err) { return done(err); }
-      if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-      if (user.password != password) { return done(null, false, { message: 'Invalid password' }); }
-      return done(null, user);
-    })
+      if (!user.username) {
+        console.error("Username not found: %s", username);
+        return done(null, fase, { message: "User #{username} not found."});
+      }
+      bcrypt.compare(password, user.password, function(err, res) {
+        console.log("Checking password match: %s", res)
+        if (res == false) {
+          console.error("Password invalid: %s", password);
+          return done(null, false, { message: 'Invalid password.' });
+        }
+        console.log("Logging in user: %s", user.id);
+        return done(null, user);
+      });
+    });
   }
 );
 
 passport.use(localStrategy);
 
 // VERIFY AUTHENTICATION
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
-}
-
-// ===================================================================
-// AWS CONFIGURATION
-// ===================================================================
-
-// Set region
-AWS.config.region = '';
-
-// Create bucket
-var s3bucket = new AWS.S3({params: {Bucket: ''}});
-
-s3bucket.createBucket(function() {
-  var params = {Key: 'key', Body: 'avatar'};
-  s3bucket.upload(params, function(err, data) {
-    if (err) {
-      console.log("Error: ", err);
-    } else {
-      console.log("Success.");
-    }
-  });
-});
+// function ensureAuthenticated(req, res, next) {
+//   if (req.isAuthenticated()) {
+//     console.log("User authentication successful.");
+//     return next(); }
+//   res.redirect('/login');
+// }
 
 //*************************************************
 // ERROR HANDLING
@@ -142,6 +143,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

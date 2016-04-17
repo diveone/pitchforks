@@ -4,3 +4,6 @@ npm-debug.log
 config/
 appspec.yml
 pitchforks.sublime-project
+TODO.md
+deps.md
+alt/
