@@ -24,7 +24,7 @@ router.use('/', ensureAuthenticated)
 
 // User Profile
 router.get(['/profile', '/:id'], function(req, res) {
-  db.query("SELECT * FROM protests WHERE submitted_by = $1", [req.user.id], function(err, dbRes) {
+  db.query("SELECT * FROM protest WHERE submitted_by = $1", [req.user.id], function(err, dbRes) {
     if(!err) {
       res.render('users/profile', { user: req.user, protests: dbRes.rows });
     }
@@ -40,7 +40,7 @@ router.get('/edit', function(req,res) {
 // Submit edits
 router.patch('/:id', function(req, res) {
   var userData = [req.body.username, req.body.email, req.body.location, req.body.avatar, req.params.id];
-  db.query("UPDATE users SET username = $1, email = $2, location = $3, avatar = $4 WHERE id = $5", userData, function(err, dbRes) {
+  db.query("UPDATE citizen SET username = $1, email = $2, location = $3, avatar = $4 WHERE id = $5", userData, function(err, dbRes) {
     if (!err) {
       res.redirect('/users/profile');
     } else {

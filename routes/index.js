@@ -30,7 +30,7 @@ var oa = new OAuth(
 // Homepage
 router.get('/', function(req, res) {
     console.log(process.env.host)
-    db.query('SELECT * FROM protests', function(err, dbRes) {
+    db.query('SELECT * FROM protest', function(err, dbRes) {
       res.render('index', { title: 'Pitchforks', user: req.user, protests: dbRes.rows });
     });
 });
@@ -62,7 +62,7 @@ router.get('/results', function(req,res) {
 
 // View Specific Protest
 router.get('/protests/:id', function(req, res) {
-  db.query("SELECT * FROM protests WHERE event_id = $1", [req.params.id], function(err, dbRes) {
+  db.query("SELECT * FROM protest WHERE event_id = $1", [req.params.id], function(err, dbRes) {
     if(!err) {
       res.render('show', { user: req.user, protest: dbRes.rows[0] });
     }
@@ -179,7 +179,7 @@ router.get('/auth/twitter/callback', function(req,res) {
         // Insert user into database
 
         var user = req.user;
-        db.query('INSERT INTO users (twitter_id, username, twitter_token,   twitter_secret) VALUES ($1, $2, $3, $4)', userResults, function(err,dbRes) {
+        db.query('INSERT INTO citizen (twitter_id, username, twitter_token,   twitter_secret) VALUES ($1, $2, $3, $4)', userResults, function(err,dbRes) {
           var user = dbRes.rows
           if (err) { return new Error(err); }
           console.log("Oauth token stored: %s", user)
@@ -210,7 +210,7 @@ router.get('/twitter', function(req,res) {
 router.post('/twitter', function(req,res) {
   // Use global userResults from OAuth to submit Twitter data
   var params = [userResults[0],userResults[1], req.body.email, req.body.password];
-  db.query('INSERT INTO users (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
+  db.query('INSERT INTO citizen (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
     res.render("login", { user: req.user } );
   });
 });

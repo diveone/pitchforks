@@ -70,7 +70,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  db.query('SELECT * FROM users WHERE id = $1', [id], function(err, dbRes) {
+  db.query('SELECT * FROM citizen WHERE id = $1', [id], function(err, dbRes) {
     console.log("Deserialize user: %s", id);
     if (!err) { done(err, dbRes.rows[0]); }
   });
@@ -78,7 +78,7 @@ passport.deserializeUser(function(id, done) {
 
 var localStrategy = new LocalStrategy(
   function(username, password, done) {
-    db.query('SELECT * FROM users WHERE username = $1', [username], function(err, dbRes) {
+    db.query('SELECT * FROM citizen WHERE username = $1', [username], function(err, dbRes) {
       if (err) {
         console.error(err);
         return done(err);
