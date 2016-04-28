@@ -1,7 +1,6 @@
 node_modules/
 bower-components/
 npm-debug.log
-config/
 appspec.yml
 pitchforks.sublime-project
 TODO.md

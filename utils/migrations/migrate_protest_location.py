@@ -14,10 +14,11 @@ from models import models
 
 DB_USER = os.environ.get('DB_USER')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
-DB_PITCHFORKS = os.environ.get('DB_PITCHFORKS')
+DB_NAME = os.environ.get('DB_NAME')
 DB_HOST = os.environ.get('DB_HOST')
-postgres_url = "postgresql://{}:{}@{}/{}".format(DB_USER, DB_PASSWORD,
-                                                 DB_HOST, DB_PITCHFORKS)
+PORT = '8000'
+postgres_url = "postgresql://{}:{}@{}:{}/{}".format(DB_USER, DB_PASSWORD,
+                                                 DB_HOST, PORT, DB_NAME)
 engine = create_engine(postgres_url)
 Session = sessionmaker(engine)
 

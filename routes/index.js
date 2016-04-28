@@ -55,7 +55,7 @@ router.get('/signup', function(req,res) {
 // Navbar Search Form
 router.get('/results', function(req,res) {
   var params = req.query['search'];
-  db.query('SELECT * FROM protests WHERE location ~* $1 OR name ~* $1', [params], function(err,dbRes) {
+  db.query('SELECT * FROM protest WHERE city ~* $1 OR state ~* $1 OR name ~* $1', [params], function(err,dbRes) {
     res.render('results', { user: req.user, protests: dbRes.rows, search: params });
   });
 });
@@ -130,6 +130,67 @@ router.get('/logout', function(req, res){
   // });
 });
 
+// ===================================================================
+// ROUTES: PROTESTS - ENSURE AUTHENTICATED
+// ===================================================================
+
+// If logged in, create new protest.
+router.get('/submit', function(req,res) {
+	var user = req.user;
+  console.log("PROTEST SUBMISSION USER: %s", user.username);
+  res.render('protests/new', { user: user });
+});
+
+// Submit protest form
+router.post('/protests', function(req,res) {
+  var protestData = [req.body.name, req.body.date, req.body.description, req.body.city, req.body.state, req.user.id];
+  db.query("INSERT INTO protests (name, date, description, city, state, submitted_by) VALUES ($1, $2, $3, $4, $5, $6)", protestData, function(err, dbRes) {
+    if(!err) {
+      res.redirect('/');
+      // Needs redirect to the protest submitted
+    }
+  });
+});
+
+// COMING SOON - Participate - No redirect? How?
+router.post('/participate', function(req,res) {
+  var protester = [req.user.id, req.protests.event_id];
+  db.query("INSERT INTO users_protests (id, event_id) VALUES ($1, $2)", protester, function(err, dbRes) {
+    if(!err) {
+      res.redirect('/protests/'+ req.params.id);
+      // Needs redirect to the protest submitted
+    }
+  });
+});
+
+// Fist Pump (Going to AJAX)
+router.post('/pump', function(req,res) {
+  var protest = [req.protests.event_id, req.protests.support];
+  db.query("UPDATE protests SET support = $2 WHERE event_id = $1", protest, function(err, dbRes) {
+    if(err) {
+      console.log(err);
+    }
+  });
+});
+
+// Edit a protest page
+router.get('/protests/:id/edit', function(req,res) {
+	db.query('SELECT * FROM protests WHERE event_id = $1', [req.params.id], function(err, dbRes) {
+    if (!err) {
+      res.render('protests/edit', { user: req.user, protest: dbRes.rows[0] });
+    }
+  });
+});
+
+// Submit protest edit form
+router.patch('/protests/:id', function(req, res) {
+	var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.params.id];
+	db.query("UPDATE protests SET name = $1, date = $2, description = $3, location = $4 WHERE event_id = $5", protestData, function(err, dbRes) {
+		if (!err) {
+			res.redirect('/'+ [req.params.id] );
+		}
+	});
+});
 
 /* ===================================================================
 TWITTER AUTHENTICATION:
@@ -179,7 +240,7 @@ router.get('/auth/twitter/callback', function(req,res) {
         // Insert user into database
 
         var user = req.user;
-        db.query('INSERT INTO citizen (twitter_id, username, twitter_token,   twitter_secret) VALUES ($1, $2, $3, $4)', userResults, function(err,dbRes) {
+        db.query('INSERT INTO citizens (twitter_id, username, twitter_token,   twitter_secret) VALUES ($1, $2, $3, $4)', userResults, function(err,dbRes) {
           var user = dbRes.rows
           if (err) { return new Error(err); }
           console.log("Oauth token stored: %s", user)
@@ -210,7 +271,7 @@ router.get('/twitter', function(req,res) {
 router.post('/twitter', function(req,res) {
   // Use global userResults from OAuth to submit Twitter data
   var params = [userResults[0],userResults[1], req.body.email, req.body.password];
-  db.query('INSERT INTO citizen (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
+  db.query('INSERT INTO citizens (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
     res.render("login", { user: req.user } );
   });
 });

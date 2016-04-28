@@ -2,7 +2,6 @@
 // ===================================================
 require('./config/env.js');
 var express         = require('express'),
-    // ejs             = require('ejs'),
     db              = require('./db.js'),
     app             = express(),
     env             = app.get('env'),
@@ -20,12 +19,14 @@ var express         = require('express'),
     methodOverride  = require('method-override'),
     logger          = require('morgan'),
     flash           = require('flash'),
-    port            = process.env['PORT'] || 8000;
+    port            = process.env['PORT'] || 8000,
+    config          = require('./config/env.js'),
+    env             = config[process.env.NODE_ENV];
 
 // ROUTE VARS
 var routes  = require('./routes/index');
 var users   = require('./routes/users');
-var protests = require('./routes/protests');
+// var protests = require('./routes/protests');
 // ===================================================================
 // CONFIGURE MIDDLEWARE
 // ===================================================================
@@ -38,9 +39,9 @@ app.use(methodOverride('_method'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended':true}));
 // app.use(cookieParser({secret: process.env.secret}))
-app.use(cookieSession({secret: process.env.secret}));
+app.use(cookieSession({secret: env.secretKey}));
 app.use(session({
-  secret: process.env.secret,
+  secret: env.secretKey,
   cookie: { secure: true, maxAge: 300000 },
   resave: false,
   saveUninitialized: true
@@ -57,9 +58,7 @@ app.use(passport.session());
 
 app.use('/', routes);
 app.use('/users', users);
-// app.use('/users', ensureAuthenticated);
-app.use('/protests', protests);
-// app.use('/protests', ensureAuthenticated);
+// app.use('/protests', protests);
 // ===================================================================
 // PASSPORT AUTHENTICATION
 // ===================================================================
@@ -104,14 +103,6 @@ var localStrategy = new LocalStrategy(
 );
 
 passport.use(localStrategy);
-
-// VERIFY AUTHENTICATION
-// function ensureAuthenticated(req, res, next) {
-//   if (req.isAuthenticated()) {
-//     console.log("User authentication successful.");
-//     return next(); }
-//   res.redirect('/login');
-// }
 
 //*************************************************
 // ERROR HANDLING

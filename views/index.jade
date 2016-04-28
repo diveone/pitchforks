@@ -15,7 +15,7 @@ block content
 					= protests[i].name
 				p
 					span.glyphicon.glyphicon-globe
-					= ' ' + protests[i].location + ', '
+					= ' ' + protests[i].city + ', ' + protests[i].state
 					span.glyphicon.glyphicon-time
 					= ' ' + protests[i].date
 				p.psql
@@ -31,7 +31,7 @@ block content
 					span.glyphicon.glyphicon-time
 					= ' ' + protests[i].date
 				p
-					= protests[i].description			
+					= protests[i].description
 
 	//- script
 	//- 	var $psql = $(".psql"),

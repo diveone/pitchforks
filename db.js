@@ -3,9 +3,9 @@ var db = {};
 var pg = require('pg');
 
 db.config = {
-  database: "pitchforks",
+  database: process.env.dbName,
   port: 5432,
-  host: "localhost",
+  host: process.env.dbHost,
   user: process.env.dbUser,
   password: process.env.dbPwd
 };

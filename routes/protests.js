@@ -1,5 +1,5 @@
 var express           = require('express'),
-    request           = require('request'),
+    // request           = require('request'),
     bcrypt            = require('bcrypt-nodejs'),
     passport          = require('passport'),
     db                = require('../db.js'),
@@ -8,7 +8,10 @@ var defaultAvatar = 'default.jpg';
 
 // VERIFY AUTHENTICATION
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
+  if (req.isAuthenticated()) {
+    console.log("User authentication successsful!")
+    return next();
+  }
   res.redirect('/login');
 }
 
@@ -18,15 +21,16 @@ router.use('/', ensureAuthenticated)
 // ===================================================================
 
 // If logged in, create new protest.
-router.get('/protests', function(req,res) {
+router.get('/submit', function(req,res) {
 	var user = req.user;
+  console.log("PROTEST SUBMISSION USER: %s", user.username);
   res.render('protests/new', { user: user });
 });
 
 // Submit protest form
 router.post('/protests', function(req,res) {
-  var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.user.id];
-  db.query("INSERT INTO protest (name, date, description, location, submitted_by) VALUES ($1, $2, $3, $4, $5)", protestData, function(err, dbRes) {
+  var protestData = [req.body.name, req.body.date, req.body.description, req.body.city, req.body.state, req.user.id];
+  db.query("INSERT INTO protest (name, date, description, city, state, submitted_by) VALUES ($1, $2, $3, $4, $5, $6)", protestData, function(err, dbRes) {
     if(!err) {
       res.redirect('/');
       // Needs redirect to the protest submitted
