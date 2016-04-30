@@ -231,6 +231,7 @@ router.get('/auth/twitter/callback', function(req,res) {
         oauth.access_token        = oauth_access_token;
         oauth.access_token_secret = oauth_access_token_secret;
         req.user.username         = results.screen_name;
+        req.user.id               = results.user_id;
         console.log("OAuth Results: "+ results.screen_name, oauth);
         // Modify global variable
         var userResults = [results.user_id, results.screen_name, oauth_access_token, oauth_access_token_secret];
