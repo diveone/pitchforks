@@ -1,16 +1,19 @@
-function testServer () {
-  var app	= require('./application'),
-  db = require('./db.js'),
-  port = process.env.PORT || 8000,
-  node_env = process.env.NODE_ENV,
-  config = require('./config/env.js');
-  env = config[process.env.NODE_ENV];
+var db = require('../db.js');
+var exports = module.exports = {}
 
-  // PORT
-  app.listen(port, function() {
-    console.log("Running Pitchforks in %s on port %s ", node_env, port);
-    console.log("Process Host: %s", env.host);
+exports.citizen = function(data) {
+  db.query('INSERT INTO citizens (username, email, password, city, state) VALUES ($1, $2, $3, $4, $5)', data, function(err, dbRes) {
+    if (err) {
+      return new Error("SPEC ERROR: %s", err);
+    }
+    console.log("SPEC DB RESULT: %s", dbRes)
   });
 }
 
-module.exports = testServer;
+exports.protest = function(data) {
+  db.query('INSERT INTO protests (name, description, date, submitted_by, city, state) VALUES ($1, $2, $3, $4, $5, $6)', data, function(err, dbRes) {
+    if (err) {
+      return new Error("SPEC ERROR : %s", err);
+    }
+  })
+}

@@ -1,13 +1,15 @@
 // SETUP DB, LOCALHOST AND HEROKU
 var db = {};
 var pg = require('pg');
+var config = require('./config/env.js');
+var env = config[process.env.NODE_ENV];
 
 db.config = {
-  database: process.env.dbName,
+  database: env.dbName,
   port: 5432,
-  host: process.env.dbHost,
-  user: process.env.dbUser,
-  password: process.env.dbPwd
+  host: env.dbHost,
+  user: env.dbUser,
+  password: env.dbPwd
 };
 
 db.connect = function(runAfterConnecting) {

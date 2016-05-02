@@ -29,7 +29,7 @@ var env = {
     host: process.env.HOST,
     port: process.env.PORT,
     dbPort: "5432",
-    secretKey: process.env.SECRET_KEY,
+    secretKey: "this key is for testing secrets",
     dbName: "pitchforks_test",
     dbUser: process.env.DB_USER,
     dbPwd: process.env.DB_PASSWORD

@@ -19,6 +19,7 @@
     "connect-redis": "^2.1.0",
     "cookie-parser": "^1.4.1",
     "cookie-session": "^2.0.0-alpha.1",
+    "csurf": "^1.8.3",
     "express": "^4.10.5",
     "express-session": "^1.9.3",
     "flash": "^1.1.0",
