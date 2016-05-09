@@ -17,6 +17,6 @@ block content
 			.list-group
 				h3 Protests You Created
 				- for (var i = 0; i < protests.length; i++)
-					a.list-group-item(href="/protests/" + protests[i].event_id)
+					a.list-group-item(href="/protest/" + protests[i].event_id)
 						= protests[i].name
 						span.badge 3 
