@@ -23,7 +23,7 @@
     "express": "^4.10.5",
     "express-session": "^1.9.3",
     "flash": "^1.1.0",
-    "jade": "^1.8.2",
+    "helmet": "^2.0.0",
     "method-override": "^2.3.0",
     "morgan": "^1.5.0",
     "oauth": "^0.9.12",
@@ -31,6 +31,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.4.9",
     "pg": "^4.1.1",
+    "pug": "^2.0.0-alpha6",
     "request": "^2.51.0"
   },
   "devDependencies": {

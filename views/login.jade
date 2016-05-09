@@ -6,6 +6,7 @@ block content
 			.alert(class='alert-danger alert-' + message.type)
 				p= message.message
 		form.form(role="form" method="POST" action="/login")
+			input(type="hidden", name="_csrf", value=csrftoken)
 			.form-group
 				.input-group
 					label.sr Username
@@ -15,6 +16,6 @@ block content
 					label.sr Password
 					input.form.control(type="password", name="password", id="pw")
 			p
-				button.btn.btn-default(type="submit") Login 
+				button.btn.btn-default(type="submit") Login
 				span.loadMsg
 	.col-sm-6

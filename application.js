@@ -14,6 +14,8 @@ var express         = require('express'),
     cookieSession   = require('cookie-session'),
     session         = require('express-session'),
     bcrypt          = require('bcrypt-nodejs'),
+    csurf           = require('csurf'),
+    helmet          = require('helmet'),
     LocalStrategy   = require('passport-local').Strategy,
     passport        = require('passport'),
     methodOverride  = require('method-override'),
@@ -21,12 +23,13 @@ var express         = require('express'),
     flash           = require('flash'),
     port            = process.env['PORT'] || 8000,
     config          = require('./config/env.js'),
-    env             = config[process.env.NODE_ENV];
+    env             = config[process.env.NODE_ENV],
+    fs              = require('fs');
 
 // ROUTE VARS
 var routes  = require('./routes/index');
 var users   = require('./routes/users');
-// var protests = require('./routes/protests');
+var protests = require('./routes/protests');
 // ===================================================================
 // CONFIGURE MIDDLEWARE
 // ===================================================================
@@ -41,24 +44,49 @@ app.use(bodyParser.urlencoded({'extended':true}));
 // app.use(cookieParser({secret: process.env.secret}))
 app.use(cookieSession({secret: env.secretKey}));
 app.use(session({
+  key: 'sessionId',
   secret: env.secretKey,
-  cookie: { secure: true, maxAge: 300000 },
+  cookie: { secure: true, maxAge: 300000, httpOnly: true },
   resave: false,
   saveUninitialized: true
 }));
 app.use(flash());
-// app.use(function(req, res, next) {
-//   req.flash('error', 'This is a test.');
-//   next();
-// });
 
 // AUTHENTICATION
 app.use(passport.initialize());
 app.use(passport.session());
 
+// HEADERS AND SECURITY
+// Use: <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+app.use(csurf());
+
 app.use('/', routes);
 app.use('/users', users);
-// app.use('/protests', protests);
+app.use('/protests', protests);
+
+app.disable('x-powered-by')
+app.use(helmet());
+
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'"],
+    styleSrc: ["'self'", 'http://fonts.googleapis.com'],
+    imgSrc: ["'self'", 'data:'],
+    fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+    reportUri: '/report-violation',
+    objectSrc: [], // An empty array allows nothing through,
+    childSrc: ['https://pitchforks.cartodb.com']
+    // sandbox: ['allow-forms', 'allow-scripts'],
+  },
+}))
+app.use(helmet.hpkp({
+  maxAge: 300000,
+  sha256s: ['AbCdEf123=', 'ZyXwVu456='],
+  reportOnly: true,
+  reportUri: '/report-violation'
+}))
+
 // ===================================================================
 // PASSPORT AUTHENTICATION
 // ===================================================================
@@ -69,7 +97,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  db.query('SELECT * FROM citizen WHERE id = $1', [id], function(err, dbRes) {
+  db.query('SELECT * FROM citizens WHERE id = $1', [id], function(err, dbRes) {
     console.log("Deserialize user: %s", id);
     if (!err) { done(err, dbRes.rows[0]); }
   });
@@ -77,7 +105,7 @@ passport.deserializeUser(function(id, done) {
 
 var localStrategy = new LocalStrategy(
   function(username, password, done) {
-    db.query('SELECT * FROM citizen WHERE username = $1', [username], function(err, dbRes) {
+    db.query('SELECT * FROM citizens WHERE username = $1', [username], function(err, dbRes) {
       if (err) {
         console.error(err);
         return done(err);

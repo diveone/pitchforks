@@ -3,7 +3,7 @@ extends ../layout
 block content
 	.container
 		.col-sm-12
-			form.form(role="form", method="POST", action="/protests")
+			form.form(role="form", method="POST", action="/protests/submit")
 				.form-group
 					.input-group
 						label.sr(for="name") Title
@@ -25,4 +25,5 @@ block content
 							.input-group
 								label.sr(for="location") State
 								input.form-control(name="state", id="state")
+								input.form-control(type="hidden" name="_csrf" value=csrftoken)
 				button(type="submit", class="btn btn-default") Submit

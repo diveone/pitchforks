@@ -3,7 +3,8 @@ var express           = require('express'),
     bcrypt            = require('bcrypt-nodejs'),
     passport          = require('passport'),
     db                = require('../db.js'),
-    router            = express.Router();
+    router            = express.Router(),
+    fs                = require('fs');
 var defaultAvatar = 'default.jpg';
 
 // TWITTER OAUTH VARIABLES
@@ -23,6 +24,18 @@ var oa = new OAuth(
   "HMAC-SHA1"
 );
 
+router.post('/report-violation', function(req, res) {
+    console.log("VIOLATION REPORT: %s", req.body);
+    fs.writeFile("./logs/", req.body, function(err) {
+        if (err) {
+            errors = new Error("Log not written: %s", err);
+            console.log(errors);
+        }
+        console.log("Violation report saved.")
+    });
+    res.redirect('/');
+});
+
 // ===================================================================
 // ROUTES: PUBLIC - ALL USERS
 // ===================================================================
@@ -30,7 +43,7 @@ var oa = new OAuth(
 // Homepage
 router.get('/', function(req, res) {
     console.log(process.env.host)
-    db.query('SELECT * FROM protest', function(err, dbRes) {
+    db.query('SELECT * FROM protests', function(err, dbRes) {
       res.render('index', { title: 'Pitchforks', user: req.user, protests: dbRes.rows });
     });
 });
@@ -44,7 +57,7 @@ router.get('/about', function(req, res) {
 
 // Login Link
 router.get('/login', function(req,res) {
-  res.render('login', { user: req.user });
+  res.render('login', { user: req.user, csrftoken: req.csrfToken() });
 });
 
 // Sign-up Link
@@ -55,14 +68,14 @@ router.get('/signup', function(req,res) {
 // Navbar Search Form
 router.get('/results', function(req,res) {
   var params = req.query['search'];
-  db.query('SELECT * FROM protest WHERE city ~* $1 OR state ~* $1 OR name ~* $1', [params], function(err,dbRes) {
+  db.query('SELECT * FROM protests WHERE city ~* $1 OR state ~* $1 OR name ~* $1', [params], function(err,dbRes) {
     res.render('results', { user: req.user, protests: dbRes.rows, search: params });
   });
 });
 
 // View Specific Protest
-router.get('/protests/:id', function(req, res) {
-  db.query("SELECT * FROM protest WHERE event_id = $1", [req.params.id], function(err, dbRes) {
+router.get('/protest/:id', function(req, res) {
+  db.query("SELECT * FROM protests WHERE event_id = $1", [req.params.id], function(err, dbRes) {
     if(!err) {
       res.render('show', { user: req.user, protest: dbRes.rows[0] });
     }
@@ -92,11 +105,11 @@ router.post('/signup', function(req,res) {
 	   // Store hash and salt in your password DB.
      var registration = [req.body.username, req.body.email, req.body.loc, defaultAvatar, hash, salt];
      var user;
-     db.query("INSERT INTO users (username, email, location, avatar, password, salt) VALUES ($1, $2, $3, $4, $5, $6)", registration, function(err, dbRes) {
+     db.query("INSERT INTO citizens (username, email, location, avatar, password, salt) VALUES ($1, $2, $3, $4, $5, $6)", registration, function(err, dbRes) {
        if (err) { console.error(err); }
        console.log("User saved: %s", dbRes.rows[0]);
 
-       db.query("SELECT * FROM users WHERE username = $1", [req.body.username], function(err, dbRes) {
+       db.query("SELECT * FROM citizens WHERE username = $1", [req.body.username], function(err, dbRes) {
          if(err) { console.log(err); }
          user = dbRes.rows[0];
          console.log("User created: %s", user.username);
@@ -128,153 +141,6 @@ router.get('/logout', function(req, res){
   // req.session.destroy(function(){
   //   res.redirect('/');
   // });
-});
-
-// ===================================================================
-// ROUTES: PROTESTS - ENSURE AUTHENTICATED
-// ===================================================================
-
-// If logged in, create new protest.
-router.get('/submit', function(req,res) {
-	var user = req.user;
-  console.log("PROTEST SUBMISSION USER: %s", user.username);
-  res.render('protests/new', { user: user });
-});
-
-// Submit protest form
-router.post('/protests', function(req,res) {
-  var protestData = [req.body.name, req.body.date, req.body.description, req.body.city, req.body.state, req.user.id];
-  db.query("INSERT INTO protests (name, date, description, city, state, submitted_by) VALUES ($1, $2, $3, $4, $5, $6)", protestData, function(err, dbRes) {
-    if(!err) {
-      res.redirect('/');
-      // Needs redirect to the protest submitted
-    }
-  });
-});
-
-// COMING SOON - Participate - No redirect? How?
-router.post('/participate', function(req,res) {
-  var protester = [req.user.id, req.protests.event_id];
-  db.query("INSERT INTO users_protests (id, event_id) VALUES ($1, $2)", protester, function(err, dbRes) {
-    if(!err) {
-      res.redirect('/protests/'+ req.params.id);
-      // Needs redirect to the protest submitted
-    }
-  });
-});
-
-// Fist Pump (Going to AJAX)
-router.post('/pump', function(req,res) {
-  var protest = [req.protests.event_id, req.protests.support];
-  db.query("UPDATE protests SET support = $2 WHERE event_id = $1", protest, function(err, dbRes) {
-    if(err) {
-      console.log(err);
-    }
-  });
-});
-
-// Edit a protest page
-router.get('/protests/:id/edit', function(req,res) {
-	db.query('SELECT * FROM protests WHERE event_id = $1', [req.params.id], function(err, dbRes) {
-    if (!err) {
-      res.render('protests/edit', { user: req.user, protest: dbRes.rows[0] });
-    }
-  });
-});
-
-// Submit protest edit form
-router.patch('/protests/:id', function(req, res) {
-	var protestData = [req.body.name, req.body.date, req.body.description, req.body.location, req.params.id];
-	db.query("UPDATE protests SET name = $1, date = $2, description = $3, location = $4 WHERE event_id = $5", protestData, function(err, dbRes) {
-		if (!err) {
-			res.redirect('/'+ [req.params.id] );
-		}
-	});
-});
-
-/* ===================================================================
-TWITTER AUTHENTICATION:
-Step 1: Route users to twitter to authenticate.
-Step 2: User returns with oath token and secret
-Step 3: Send token to twitter to exchange for access token.
-Step 4: Save access token for later use.
-======================================================================*/
-router.get('/auth/twitter', function(req, res){
-  oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Oauth session created: %s", req.session)
-      req.session.oauth = {}
-      req.session.oauth.token = oauth_token;
-      req.session.oauth.token_secret = oauth_token_secret;
-
-      console.log('>>>> Oauth token: %s', req.session.oauth.token);
-      console.log('>>>> Oauth results: user %s', results.screen_name);
-      res.redirect(twitterAuth + oauth_token)
-    }
-  });
-});
-
-// Make variable available globally
-
-router.get('/auth/twitter/callback', function(req,res) {
-  var oauth = req.session.oauth;
-  if (oauth) {
-    oauth.verifier = req.query.oauth_verifier;
-
-    oa.getOAuthAccessToken(oauth.token,oauth.token_secret,oauth.verifier,
-    function(error, oauth_access_token, oauth_access_token_secret, results){
-      if (error){
-        console.log("Oauth access token error: %s", error);
-      } else {
-        oauth.access_token        = oauth_access_token;
-        oauth.access_token_secret = oauth_access_token_secret;
-        req.user.username         = results.screen_name;
-        req.user.id               = results.user_id;
-        console.log("OAuth Results: "+ results.screen_name, oauth);
-        // Modify global variable
-        var userResults = [results.user_id, results.screen_name, oauth_access_token, oauth_access_token_secret];
-        console.log(userResults);
-        // Check for user in the DB
-
-        // Insert user into database
-
-        var user = req.user;
-        db.query('INSERT INTO citizens (twitter_id, username, twitter_token,   twitter_secret) VALUES ($1, $2, $3, $4)', userResults, function(err,dbRes) {
-          var user = dbRes.rows
-          if (err) { return new Error(err); }
-          console.log("Oauth token stored: %s", user)
-          req.login(user, function(err, res) {
-            if (err) { return new Error('Twitter login error: ' + err); }
-            res.render('/', { user: req.user });
-          })
-        });
-
-        // res.render("twitter", { user: req.user });
-      }
-    });
-  } else {
-    // 404 or other message
-    res.send("Session not found.");
-  }
-});
-
-// Twitter redirect page
-router.get('/twitter', function(req,res) {
-  if (req.session.oauth) {
-    var user = req.user
-
-  }
-});
-
-// Pitchforks form from Twitter redirect
-router.post('/twitter', function(req,res) {
-  // Use global userResults from OAuth to submit Twitter data
-  var params = [userResults[0],userResults[1], req.body.email, req.body.password];
-  db.query('INSERT INTO citizens (twitter_id, username, email, password) VALUES ($1, $2, $3, $4)', params, function(err,dbRes) {
-    res.render("login", { user: req.user } );
-  });
 });
 
 module.exports = router;
