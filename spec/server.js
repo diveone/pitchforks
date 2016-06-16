@@ -1,16 +1,18 @@
 function testServer () {
-  var app	= require('./application'),
-  db = require('./db.js'),
-  port = process.env.PORT || 8000,
-  node_env = process.env.NODE_ENV,
-  config = require('./config/env.js');
-  env = config[process.env.NODE_ENV];
+    var app	= require('../application'),
+        config = require('../config/env.js'),
+        node_env = 'testing',
+        env = config[node_env],
+        port = env.TEST_PORT || 7000,
+        db = require('../db.js');
 
+    db.config.database = 'pitchforks_test'
   // PORT
-  app.listen(port, function() {
-    console.log("Running Pitchforks in %s on port %s ", node_env, port);
-    console.log("Process Host: %s", env.host);
-  });
+    var server = app.listen(port, function() {
+        console.log("Running Pitchforks Test in %s on port %s ", node_env, port);
+    });
+
+    return server;
 }
 
 module.exports = testServer;

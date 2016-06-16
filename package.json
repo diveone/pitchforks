@@ -35,6 +35,8 @@
     "request": "^2.51.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "factory-girl": "^3.2.0-beta",
     "jasmine": "^2.4.1",
     "supertest": "^1.2.0"
   }
