@@ -115,7 +115,7 @@ var localStrategy = new LocalStrategy(
 
       if (!user.username) {
         console.error("Username not found: %s", username);
-        return done(null, fase, { message: "User #{username} not found."});
+        return done(null, false, { message: "User ${username} not found."});
       }
       bcrypt.compare(password, user.password, function(err, res) {
         console.log("Checking password match: %s", res)

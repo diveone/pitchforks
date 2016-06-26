@@ -5,7 +5,7 @@ var express           = require('express'),
     db                = require('../db.js'),
     router            = express.Router(),
     fs                = require('fs');
-var defaultAvatar = 'default.jpg';
+var defaultAvatar     = 'default.jpg';
 
 // TWITTER OAUTH VARIABLES
 var OAuth = require('oauth').OAuth;

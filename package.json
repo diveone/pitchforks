@@ -1,13 +1,14 @@
 {
   "name": "pitchforks",
-  "description": "",
+  "description": "Media tool for keeping track of civic protests.",
   "version": "1.0.0",
   "engines": {
-    "node": "0.10.35"
+    "node": "6.2.2"
   },
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -c spec/",
+    "watch": "mocha -w spec/"
   },
   "author": "Kay Hudson",
   "license": "ISC",

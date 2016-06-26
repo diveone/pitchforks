@@ -15,7 +15,7 @@ db.config = {
 db.connect = function(runAfterConnecting) {
   pg.connect(db.config, function(err, client, done){
     if (err) {
-      console.error("OOOPS!!! SOMETHING WENT WRONG!", err);
+      console.error("DATABASE CONNECTION ERROR", err);
     }
     runAfterConnecting(client);
     done();
