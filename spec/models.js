@@ -15,6 +15,13 @@ var dbModels = {
                   text: 'SELECT FROM citizens WHERE id=$1',
                   values: data
               })
+        },
+        getByName: function(data) {
+              db.query({
+                  name: 'get citizen by name',
+                  text: 'SELECT FROM citizens WHERE username=$1',
+                  values: data
+              })
         }
     },
     protest: {
@@ -28,7 +35,7 @@ var dbModels = {
         get: function(data) {
               db.query({
                   name: 'get protest',
-                  text: 'SELECT FROM citizens WHERE id=$1',
+                  text: 'SELECT FROM protests WHERE id=$1',
                   values: data
               })
         }

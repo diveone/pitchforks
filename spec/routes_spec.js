@@ -13,29 +13,60 @@ var Factory = require('./models.js');
 // Testing utilities
 var u = require('./utils.js');
 
-console.log('ENV: TEST - DB: %s - PORT: %s', env.dbName, env.port);
+console.log('ENV: TEST - DB: %s - PORT: %s', env.dbName, env.dbPort);
 
 describe("Route Specs - ", function() {
     describe("public routes - ", function() {
         var citizenData = [u.randomUser(), u.randomEmail(), 'password', 'Testville, TX', '1'];
-        var protestData = ['Test Default Protest', 'This is a test protest', '2015-04-18', '1', 'Testville', 'TX'];
+        var protestData = ['Test Default Protest', 'This is a test protest', '2015-04-18', 42, 'Testville', 'TX'];
 
-        before(function() {
+        before(function(done) {
             server = require('./server')();
-            citizen = Factory.citizen.add(citizenData);
-            protest = Factory.protest.add(protestData);
-            // done();
+            Factory.citizen.add(citizenData);
+            Factory.protest.add(protestData);
+            done();
         });
+
         after(function(done) {
-            Factory.clear.citizens();
-            Factory.clear.protests();
-            server.close()
+            // Factory.clear.citizens();
+            // Factory.clear.protests();
+            server.close();
             done();
         });
 
         it("/index returns 200", function(done) {
             request(server)
                 .get('/')
+                .expect(200, {})
+                .end(function(err, res) {
+                    if (err) return done(err);
+                    done();
+                });
+        });
+
+        it("/about returns 200", function(done) {
+            request(server)
+                .get('/about')
+                .expect(200, {})
+                .end(function(err, res) {
+                    if (err) return done(err);
+                    done();
+                });
+        });
+
+        it("/signup returns 200", function(done) {
+            request(server)
+                .get('/signup')
+                .expect(200, {})
+                .end(function(err, res) {
+                    if (err) return done(err);
+                    done();
+                });
+        });
+
+        it("/login returns 200", function(done) {
+            request(server)
+                .get('/login')
                 .expect(200)
                 .end(function(err, res) {
                     if (err) return done(err);
@@ -43,22 +74,31 @@ describe("Route Specs - ", function() {
                 });
         });
 
-        it("/protest displays new form", function(done) {
+        it("/signup new user", function(done) {
             request(server)
-                .get('/protests/submit')
+                .post('/signup')
+                .set('Content-Type', 'application/json')
+                .send({
+                    "username": "Newuser",
+                    "email": "newuser@example.com",
+                    "location": "Chicago"
+                })
                 .expect(200)
+                .expect(function(res) {
+                    citizen = Factory.citizen.getByName(['Newuser'])
+                    expect(citizen).to.exist
+                })
                 .end(function(err, res) {
                     if (err) return done(err);
                     done();
                 });
         });
+
 
         it("/protest/:id displays a protest", function(done) {
             request(server)
-                .get('/protest/1')
-                .expect(200, {
-                    name: "Test Protest"
-                })
+                .get('/protest/28')
+                .expect(200, {})
                 .end(function(err, res) {
                     if (err) return done(err);
                     done();
@@ -68,14 +108,44 @@ describe("Route Specs - ", function() {
         it("/results displays search results", function(done) {
             request(server)
                 .get('/results')
-                .send({search: "protest"})
-                .expect(200, {
-                    name: "Test Protest"
-                })
+                .set('Accept', 'application/json')
+                .query({search: "protest"})
+                .expect(200)
                 .end(function(err, res) {
                     if (err) return done(err);
+                    console.log("Search results: %s", res.body.protests)
                     done();
                 });
         });
-  });
+    });
+
+    describe('Users', function() {
+        var citizenData = [u.randomUser(), u.randomEmail(), 'password', 'Testville, TX', '1'];
+        var protestData = ['Test Default Protest', 'This is a test protest', '2015-04-18', 42, 'Testville', 'TX'];
+
+        before(function(done) {
+            server = require('./server')();
+            // Factory.citizen.add(citizenData);
+            // Factory.protest.add(protestData);
+            done();
+        });
+
+        after(function(done) {
+            // Factory.clear.citizens();
+            // Factory.clear.protests();
+            server.close();
+            done();
+        });
+
+        it.skip("successful user login", function(done) {
+            citizen = Factory.citizen.get([28])
+            request(server)
+                .post('/login')
+                .send({"username": citizen.username, "password": "password"})
+                .expect(200)
+        })
+
+        it.skip("user profile")
+        it.skip("")
+    })
 });

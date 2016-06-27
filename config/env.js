@@ -1,9 +1,9 @@
 var env = {
   development: {
-    host: "localhost",
-    port: "8000",
-    dbPort: "5432",
-    secretKey: "milky way is the only way",
+    host: process.env.HOST,
+    port: process.env.PORT,
+    dbPort: process.env.DB_PORT,
+    secretKey: process.env.SECRET_KEY,
     dbName: "pitchforks_dev",
     dbUser: process.env.DB_USER,
     dbPwd: process.env.DB_PASSWORD,
@@ -28,8 +28,8 @@ var env = {
   testing: {
     host: process.env.HOST,
     port: process.env.TEST_PORT,
-    dbPort: "5432",
-    secretKey: "this key is for testing secrets",
+    dbPort: process.env.DB_PORT,
+    secretKey: process.env.SECRET_KEY,
     dbName: "pitchforks_test",
     dbUser: process.env.DB_USER,
     dbPwd: process.env.DB_PASSWORD
