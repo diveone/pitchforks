@@ -1,4 +1,4 @@
-// CONFIGURE VARIABLES
+// CONFIGURATION
 // ===================================================
 require('./config/env.js');
 var express         = require('express'),
